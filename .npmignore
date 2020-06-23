@@ -1,0 +1,6 @@
+/node_modules/
+/scripts/
+/tests/
+.editorconfig
+*.tgz
+tsconfig.json
