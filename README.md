@@ -1,6 +1,8 @@
 Declarative Mapper for NodeJS
 =============================
 
+![](https://github.com/snatalenko/declarative-mapper/workflows/Tests/badge.svg)
+
 ## Reasoning
 
 - **Declarative** - to allow mapping configuration from user interface
