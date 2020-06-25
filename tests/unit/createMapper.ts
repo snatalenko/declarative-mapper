@@ -93,7 +93,34 @@ with ($globalContext($input, $extensionNames)) {
 			foo: 'bar',
 			baz: 'prefixed:a'
 		});
-	})
+	});
+
+	it('maps result from simple type', () => {
+
+		const mapper = createMapper({
+			map: {
+				'*': 'foo'
+			}
+		});
+
+		const result = mapper({ foo: 'bar' });
+
+		expect(result).to.eq('bar');
+	});
+
+	it('maps array elements from simple types', () => {
+
+		const mapper = createMapper({
+			forEach: 'arr',
+			map: {
+				'*': '$record * 2'
+			}
+		});
+
+		const result = mapper({ arr: [1, 2, 3] });
+
+		expect(result).to.eql([2, 4, 6]);
+	});
 
 	it('works fast', () => {
 

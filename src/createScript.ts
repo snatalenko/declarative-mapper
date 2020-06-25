@@ -2,8 +2,15 @@ import { TPropertiesMap, TRootMapping } from './TMapping';
 
 function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
 
-	const isArray = Object.keys(map).every(k => k && !isNaN(Number(k)));
 	const prefix = '  '.repeat(level);
+	const keys = Object.keys(map);
+	const isRootElementMapping = keys.length === 1 && keys[0] === '*';
+	if (isRootElementMapping) {
+		yield `${prefix}    return ${map[keys[0]] || null};`;
+		return;
+	}
+
+	const isArray = keys.every(k => k && !isNaN(Number(k)));
 
 	if (isArray)
 		yield `${prefix}    return Object.assign([], {`;
@@ -21,9 +28,9 @@ function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
 		}
 	}
 
-	if(isArray)
+	if (isArray)
 		yield `${prefix}    });`;
-	else 
+	else
 		yield `${prefix}    };`;
 }
 
