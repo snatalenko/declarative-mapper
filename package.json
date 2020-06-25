@@ -1,6 +1,6 @@
 {
   "name": "declarative-mapper",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Declarative object mapper for NodeJS",
   "keywords": [
     "declarative",
