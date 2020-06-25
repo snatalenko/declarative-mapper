@@ -63,7 +63,7 @@ with ($globalContext($input, $extensionNames)) {
       return {
         foo: true,
       };
-  })()
+    })()
 }`);
 	});
 
