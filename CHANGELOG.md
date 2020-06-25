@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/snatalenko/declarative-mapper/compare/v1.1.0...v1.1.1) (2020-06-25)
+
+
+### Fixes
+
+* Indentation in generated scripts ([9798e90](https://github.com/snatalenko/declarative-mapper/commit/9798e9083a1717e44047722516232c81e304b2b7))
+
+
 # [1.1.0](https://github.com/snatalenko/declarative-mapper/compare/v1.0.1...v1.1.0) (2020-06-25)
 
 
