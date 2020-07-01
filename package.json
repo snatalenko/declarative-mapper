@@ -12,6 +12,7 @@
     "test": "mocha -r ts-node/register tests/unit/*.ts",
     "test:watch": "mocha -r ts-node/register --watch --watch-files src, tests/unit/*.ts",
     "changelog": "conventional-changelog -n ./scripts/changelog -i CHANGELOG.md -s",
+    "prepack": "npm t && tsc",
     "preversion": "npm t",
     "version": "npm run changelog && git add CHANGELOG.md"
   },
