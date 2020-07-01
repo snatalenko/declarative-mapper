@@ -1,4 +1,4 @@
-import { TPropertiesMap, TRootMapping } from './TMapping';
+import { TPropertiesMap, TRootMapping, TArrayMapping, TObjectInContextMapping, TObjectMapping } from './TMapping';
 
 function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
 
@@ -39,22 +39,45 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 	const prefix = '  '.repeat(level);
 
 	if ('forEach' in mapping) {
-		yield `${prefix}  ${mapping.forEach}.map(($record, $index, $collection) => {`
+		const { forEach, map } = mapping as TArrayMapping;
+		if (!forEach)
+			throw new TypeError(`Property "forEach" is empty in mapping "${JSON.stringify(mapping)}"`);
+		if (!map)
+			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
+
+		yield `${prefix}  ${forEach}.map(($record, $index, $collection) => {`
 		yield `${prefix}    with ($record) {`
-		yield* propertiesMapToJs(mapping.map, level + 2);
+		yield* propertiesMapToJs(map, level + 2);
 		yield `${prefix}    }`;
 		yield `${prefix}  })`;
 	}
 	else if ('from' in mapping) {
+		const { from, map } = mapping as TObjectInContextMapping;
+		if (!from)
+			throw new TypeError(`Property "from" is empty in mapping "${JSON.stringify(mapping)}"`);
+		if (!map)
+			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
+
 		yield `${prefix}  (() => {`;
-		yield `${prefix}    with (${mapping.from}) {`
-		yield* propertiesMapToJs(mapping.map, level + 2);
+		yield `${prefix}    with (${from}) {`
+		yield* propertiesMapToJs(map, level + 2);
 		yield `${prefix}    }`;
 		yield `${prefix}  })()`;
 	}
-	else {
+	else if ('map' in mapping && Object.keys(mapping).length === 1) {
+		const { map } = mapping as TObjectMapping;
+		if (!map)
+			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
+
 		yield `${prefix}  (() => {`;
-		yield* propertiesMapToJs(mapping.map, level + 1);
+		yield* propertiesMapToJs(map, level + 1);
+		yield `${prefix}  })()`;
+	}
+	else {
+		const map = mapping as TPropertiesMap;
+
+		yield `${prefix}  (() => {`;
+		yield* propertiesMapToJs(map, level + 1);
 		yield `${prefix}  })()`;
 	}
 }

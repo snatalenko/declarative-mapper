@@ -40,6 +40,20 @@ describe('createMapper', () => {
 		});
 	});
 
+	it('maps values from source document (without `map` directive)', () => {
+
+		const mapper = createMapper({
+			'foo': 'a'
+		});
+
+		const result = mapper({ a: 'b' });
+
+		expect(result).to.eql({
+			foo: 'b'
+		});
+	});
+
+
 	it('logs script body as a trace output to logger', () => {
 
 		const log: string[] = [];
