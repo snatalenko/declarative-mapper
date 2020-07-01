@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/snatalenko/declarative-mapper/compare/v1.1.1...v1.2.0) (2020-07-01)
+
+
+### Features
+
+* Make `map` parameter optional in plain objects mapping ([f8ef7b0](https://github.com/snatalenko/declarative-mapper/commit/f8ef7b0a74f88273fc0b0175c7a3e75ae46a35ca))
+
+
 ## [1.1.1](https://github.com/snatalenko/declarative-mapper/compare/v1.1.0...v1.1.1) (2020-06-25)
 
 
