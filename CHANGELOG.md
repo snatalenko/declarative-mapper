@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/snatalenko/declarative-mapper/compare/v1.2.0...v1.2.1) (2020-07-01)
+
+
+### Build System
+
+* Run tests and compilation before packing ([2c30d95](https://github.com/snatalenko/declarative-mapper/commit/2c30d95cf6988ec7c627d5aea161193900c9c60e))
+
+
 # [1.2.0](https://github.com/snatalenko/declarative-mapper/compare/v1.1.1...v1.2.0) (2020-07-01)
 
 
