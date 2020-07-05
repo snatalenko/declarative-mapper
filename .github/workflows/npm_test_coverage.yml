@@ -1,16 +1,13 @@
-name: Tests
+name: Test Coverage
 
-on:
-  push:
-    tags:
-      - 'v*'
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [12.x]
 
     steps:
     - name: Checkout
@@ -26,5 +23,10 @@ jobs:
       env:
         CI: true
 
-    - name: NPM Test
-      run: npm test
+    - name: NPM Test Coverage
+      run: npm run test:coverage
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
