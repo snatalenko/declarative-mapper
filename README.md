@@ -2,7 +2,7 @@ Declarative Mapper for NodeJS
 =============================
 
 [![NPM Version](https://img.shields.io/npm/v/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
-[![Tests](https://github.com/snatalenko/declarative-mapper/workflows/Tests/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
+[![Build](https://github.com/snatalenko/declarative-mapper/workflows/build/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
 [![Coverage Status](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
 [![NPM Downloads](https://img.shields.io/npm/dm/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
 
@@ -13,6 +13,7 @@ Declarative Mapper for NodeJS
 - **Secure** - run in own context and restrict access to outside environment
 - **Fast** - to map hundreds of thousands documents within a second
 - **Typed** - for less errors and easier mapping with intellisense
+- **Lightweight** - without dependencies
 
 
 ## Getting Started
