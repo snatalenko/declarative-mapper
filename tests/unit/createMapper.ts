@@ -53,6 +53,56 @@ describe('createMapper', () => {
 		});
 	});
 
+	it('maps loops using `forEach` directive', () => {
+
+		const input = {
+			arr: [{
+				id: 1,
+				qty: 100
+			}, {
+				id: 2,
+				qty: 200
+			}]
+		};
+		const mapper = createMapper({
+			forEach: 'arr',
+			map: {
+				description: "'#' + id + ' - ' + qty + ' items'"
+			}
+		});
+
+		const result = mapper(input);
+
+		expect(result).to.eql([
+			{ description: '#1 - 100 items' },
+			{ description: '#2 - 200 items' }
+		]);
+	});
+
+	it('allows to switch mapping context using `from` directive', () => {
+
+		const input = {
+			container: {
+				nested: {
+					bar: 'baz'
+				}
+			}
+		};
+
+		const mapper = createMapper({
+			from: 'container.nested',
+			map: {
+				foo: 'bar'
+			}
+		});
+
+		const result = mapper(input);
+
+		expect(result).to.eql({
+			foo: 'baz'
+		});
+	});
+
 
 	it('logs script body as a trace output to logger', () => {
 
@@ -146,6 +196,19 @@ with ($createGlobalContext($input)) {
 		});
 
 		expect(() => mapper({ bar: 'baz' })).to.throw('Extension "bar" conflicts with a field name passed in input');
+	});
+
+	it('throws errors on incorrectly formatted instructions', () => {
+
+		expect(() => createMapper({ from: 'test' })).to.throw('Property "map" is empty in mapping "{"from":"test"}"');
+
+		expect(() => createMapper({ from: '' })).to.throw('Property "from" is empty in mapping "{"from":""}"');
+
+		expect(() => createMapper({ forEach: 'test' })).to.throw('Property "map" is empty in mapping "{"forEach":"test"}"');
+
+		expect(() => createMapper({ forEach: '' })).to.throw('Property "forEach" is empty in mapping "{"forEach":""}"');
+
+		expect(() => createMapper({ map: '' })).to.throw('Property "map" is empty in mapping "{"map":""}"');
 	});
 
 	it('works fast', () => {

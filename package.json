@@ -10,6 +10,7 @@
   "types": "types/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register tests/unit/*.ts",
+    "test:coverage": "nyc npm run test",
     "test:watch": "mocha -r ts-node/register --watch --watch-files src, tests/unit/*.ts",
     "changelog": "conventional-changelog -n ./scripts/changelog -i CHANGELOG.md -s",
     "prepack": "npm t && tsc",
@@ -32,6 +33,7 @@
     "@types/node": "^14.0.13",
     "chai": "^4.2.0",
     "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   }
