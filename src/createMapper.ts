@@ -1,10 +1,25 @@
 import { TRootMapping } from './TMapping';
 import * as vm from 'vm';
 import createScript from './createScript';
-import * as runtime from './runtime';
+import { createGlobalContext } from './runtime';
 
 interface ILogger {
 	trace(message: string, ...args: any[]): void;
+}
+
+type TMappingScriptEnvironment<TSource, TResult> = {
+	/** Main input source */
+	$input?: TSource;
+
+	/** Placeholder for mapping output */
+	$result?: TResult;
+
+	/** 
+	 * Method for top level context creation.
+	 * Resulting object catches all variable requests
+	 * and returns `undefined` instead of ReferenceError
+	 */
+	$createGlobalContext(input: object): any;
 }
 
 /**
@@ -27,16 +42,12 @@ export default function createMapper<TSource, TResult>(map: TRootMapping, option
 
 	const script = new vm.Script(scriptBody);
 
-	const sandbox: {
-		$input?: TSource,
-		$result?: TResult,
-		$extensionNames?: string[],
-		$globalContext
-	} = {
+	const extensionNames = options && options.extensions ? Object.keys(options.extensions) : undefined;
+
+	const sandbox: TMappingScriptEnvironment<TSource, TResult> = {
 		$input: undefined,
 		$result: undefined,
-		$extensionNames: options?.extensions ? Object.keys(options.extensions) : [],
-		...runtime,
+		$createGlobalContext: (input: object) => createGlobalContext(input, extensionNames),
 		...options?.extensions
 	};
 

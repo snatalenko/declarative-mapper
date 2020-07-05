@@ -89,7 +89,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
  */
 export default function createScript(map: TRootMapping) {
 	return `
-with ($globalContext($input, $extensionNames)) {
+with ($createGlobalContext($input)) {
   $result =
 ${Array.from(mappingToJs(map, 1)).join('\n')}
 }`;

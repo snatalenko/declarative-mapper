@@ -1,1 +1,1 @@
-export { default as $globalContext } from './globalContext';
+export { default as createGlobalContext } from './createGlobalContext';

@@ -10,7 +10,7 @@ const GLOBAL_PROPERTIES = [
 	'$result'
 ]
 
-export default function $globalContext(context: object, extensionNames?: string[]): any {
+export default function createGlobalContext(context: object, extensionNames?: string[]): any {
 	return new Proxy(context, {
 		has(target: object, key: string) {
 			return !GLOBAL_PROPERTIES.includes(key)

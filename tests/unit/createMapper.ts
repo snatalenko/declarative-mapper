@@ -71,7 +71,7 @@ describe('createMapper', () => {
 		expect(log).to.have.length(1);
 		expect(log[0]).to.eql(
 			`
-with ($globalContext($input, $extensionNames)) {
+with ($createGlobalContext($input)) {
   $result =
     (() => {
       return {
