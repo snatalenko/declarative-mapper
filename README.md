@@ -1,8 +1,10 @@
 Declarative Mapper for NodeJS
 =============================
 
-[![](https://github.com/snatalenko/declarative-mapper/workflows/Tests/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
+[![NPM Version](https://img.shields.io/npm/v/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
+[![Tests](https://github.com/snatalenko/declarative-mapper/workflows/Tests/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
 [![Coverage Status](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
+[![NPM Downloads](https://img.shields.io/npm/dm/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
 
 ## Reasoning
 
