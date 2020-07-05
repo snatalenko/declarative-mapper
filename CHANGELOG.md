@@ -1,3 +1,16 @@
+## [1.2.5](https://github.com/snatalenko/declarative-mapper/compare/v1.2.4...v1.2.5) (2020-07-05)
+
+
+### Documentation
+
+* Add comments to the readme example ([30f0718](https://github.com/snatalenko/declarative-mapper/commit/30f0718ba162d7e1fc416adc92f106a7eed19b16))
+* Add test coverage badge to readme ([039a98b](https://github.com/snatalenko/declarative-mapper/commit/039a98b3849c0326870a08df0b2faa4cf544e1c8))
+
+### Build System
+
+* Test coverage as separate github action ([d5040f1](https://github.com/snatalenko/declarative-mapper/commit/d5040f1664eeec5e15d61cfc65f025daa099addf))
+
+
 ## [1.2.4](https://github.com/snatalenko/declarative-mapper/compare/v1.2.3...v1.2.4) (2020-07-05)
 
 
