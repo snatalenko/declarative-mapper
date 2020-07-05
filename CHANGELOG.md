@@ -1,3 +1,16 @@
+## [1.2.6](https://github.com/snatalenko/declarative-mapper/compare/v1.2.5...v1.2.6) (2020-07-05)
+
+
+### Documentation
+
+* Add version and downloads ([71f9068](https://github.com/snatalenko/declarative-mapper/commit/71f9068410f7887d956cb5940bbd3157149a8b06))
+
+### Build System
+
+* Use github actions for publishing ([d6dfc6c](https://github.com/snatalenko/declarative-mapper/commit/d6dfc6c8c903667b58b1609e85678a9b6ff89467))
+* Exclude coverage metadata from npm package ([b3635f9](https://github.com/snatalenko/declarative-mapper/commit/b3635f919810e4a6e2c2664898bd8eaaf76e5c78))
+
+
 ## [1.2.5](https://github.com/snatalenko/declarative-mapper/compare/v1.2.4...v1.2.5) (2020-07-05)
 
 
