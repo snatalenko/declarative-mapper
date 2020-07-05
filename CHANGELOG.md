@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/snatalenko/declarative-mapper/compare/v1.2.3...v1.2.4) (2020-07-05)
+
+
+### Build System
+
+* Add lcov reporter ([64a69e7](https://github.com/snatalenko/declarative-mapper/commit/64a69e7889585117dc7fe4e6fa93e961b93b1599))
+
+
 ## [1.2.3](https://github.com/snatalenko/declarative-mapper/compare/v1.2.2...v1.2.3) (2020-07-05)
 
 
