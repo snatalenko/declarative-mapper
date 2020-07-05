@@ -136,15 +136,34 @@ with ($createGlobalContext($input)) {
 		expect(result).to.eql([2, 4, 6]);
 	});
 
+	it('throws error if input field names conflict with extension names', () => {
+		const mapper = createMapper({
+			foo: 'bar'
+		}, {
+			extensions: {
+				bar: 'test'
+			}
+		});
+
+		expect(() => mapper({ bar: 'baz' })).to.throw('Extension "bar" conflicts with a field name passed in input');
+	});
+
 	it('works fast', () => {
 
 		const mapper = createMapper({
 			map: {
-				foo: 'bar'
+				foo: 'dict[bar]'
+			}
+		}, {
+			extensions: {
+				dict: {
+					a: 'b',
+					x: 'y'
+				}
 			}
 		});
 
 		for (let i = 0; i < 10000; i++)
-			mapper({ bar: 'baz' });
+			mapper({ bar: 'a' });
 	});
 });

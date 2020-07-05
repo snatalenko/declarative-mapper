@@ -58,6 +58,12 @@ export default function createMapper<TSource, TResult>(map: TRootMapping, option
 		sandbox.$input = document;
 		sandbox.$result = undefined;
 
+		if (extensionNames) {
+			const conflictingKey = Object.keys(document).find(inputKey => extensionNames.includes(inputKey));
+			if (conflictingKey)
+				throw new TypeError(`Extension "${conflictingKey}" conflicts with a field name passed in input`);
+		}
+
 		script.runInContext(context);
 
 		return sandbox.$result;
