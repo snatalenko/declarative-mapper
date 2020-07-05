@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/snatalenko/declarative-mapper/compare/v1.2.1...v1.2.2) (2020-07-05)
+
+
+### Changes
+
+* Throw error when extension conflicts with input ([7e10861](https://github.com/snatalenko/declarative-mapper/commit/7e10861370d6c52338fb9c22bd0e4dd16bff474a))
+* Remove $extensionNames var from execution context ([6554907](https://github.com/snatalenko/declarative-mapper/commit/6554907cbf33d9d970c628e991463dc56d56b11b))
+
+
 ## [1.2.1](https://github.com/snatalenko/declarative-mapper/compare/v1.2.0...v1.2.1) (2020-07-01)
 
 
