@@ -1,3 +1,11 @@
+## [1.2.3](https://github.com/snatalenko/declarative-mapper/compare/v1.2.2...v1.2.3) (2020-07-05)
+
+
+### Build System
+
+* Add test coverage integration ([1d04114](https://github.com/snatalenko/declarative-mapper/commit/1d041145c9fbc83ec3f8bbefe48d6950116a9241))
+
+
 ## [1.2.2](https://github.com/snatalenko/declarative-mapper/compare/v1.2.1...v1.2.2) (2020-07-05)
 
 
