@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/snatalenko/declarative-mapper/compare/v1.2.6...v1.3.0) (2020-07-11)
+
+
+### Features
+
+* Add mapping template generator ([17564de](https://github.com/snatalenko/declarative-mapper/commit/17564def40baf727a73c171625a6b6dbd646929c))
+
+
 ## [1.2.6](https://github.com/snatalenko/declarative-mapper/compare/v1.2.5...v1.2.6) (2020-07-05)
 
 
