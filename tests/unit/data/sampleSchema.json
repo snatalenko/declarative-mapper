@@ -1,0 +1,87 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "type": "object",
+    "properties": {
+        "longText": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 20
+        },
+        "shortText": {
+            "type": "string",
+            "maxLength": 2
+        },
+        "bool": {
+            "type": "boolean"
+        },
+        "null": {
+            "type": "null"
+        },
+        "number": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 2
+        },
+        "numWithMin": {
+            "type": "number",
+            "minimum": 100,
+            "exclusiveMinimum": true
+        },
+        "numWithMax": {
+            "type": "number",
+            "maximum": 200,
+            "exclusiveMaximum": true
+        },
+        "int": {
+            "type": "integer",
+            "minimum": 100,
+            "exclusiveMinimum": true,
+            "maximum": 200,
+            "exclusiveMaximum": true
+        },
+        "array": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "work",
+                            "home"
+                        ]
+                    }
+                }
+            }
+        },
+        "stringArray": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 2
+        },
+        "tupleArray": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "number"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "foo": {
+                            "type": "string",
+                            "enum": [
+                                "bar"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

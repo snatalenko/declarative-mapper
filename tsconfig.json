@@ -13,7 +13,8 @@
         "declaration": true,
         "declarationDir": "./types",
         "strictNullChecks": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true
     },
     "include": [
         "src/**/*"

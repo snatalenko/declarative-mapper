@@ -1,5 +1,7 @@
+export type TValueMap = string | TObjectMapping | TArrayMapping | TObjectInContextMapping | TPropertiesMap;
+
 export type TPropertiesMap = {
-	[fieldName: string]: string | TObjectMapping | TArrayMapping | TObjectInContextMapping | TPropertiesMap
+	[fieldName: string]: TValueMap
 }
 
 export type TObjectMapping = {
