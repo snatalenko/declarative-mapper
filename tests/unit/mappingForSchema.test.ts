@@ -19,6 +19,8 @@ describe('mappingForSchema', () => {
 			map: {
 				longText: '"texttextte"',
 				shortText: '"te"',
+				textWithExample: '"example 1"',
+				textWithDefault: '"example 2"',
 				bool: "true",
 				null: "null",
 				numWithMax: "199.99",
@@ -64,6 +66,8 @@ describe('mappingForSchema', () => {
 		expect(result).to.eql({
 			longText: 'texttextte',
 			shortText: 'te',
+			textWithExample: 'example 1',
+			textWithDefault: 'example 2',
 			bool: true,
 			null: null,
 			numWithMax: 199.99,

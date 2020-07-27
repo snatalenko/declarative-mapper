@@ -15,8 +15,16 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		maximum,
 		exclusiveMaximum,
 		minLength,
-		maxLength
+		maxLength,
+		example,
+		default: defaultValue
 	} = schema;
+
+	if (example)
+		return example;
+
+	if (defaultValue)
+		return defaultValue;
 
 	if (type === 'string') {
 		if (schema.enum && typeof schema.enum[0] === 'string')

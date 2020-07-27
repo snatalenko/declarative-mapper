@@ -11,6 +11,14 @@
             "type": "string",
             "maxLength": 2
         },
+        "textWithExample": {
+            "type": "string",
+            "example": "example 1"
+        },
+        "textWithDefault": {
+            "type": "string",
+            "default": "example 2"
+        },
         "bool": {
             "type": "boolean"
         },
