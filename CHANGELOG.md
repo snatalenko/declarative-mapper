@@ -1,3 +1,15 @@
+## [1.3.1](https://github.com/snatalenko/declarative-mapper/compare/v1.3.0...v1.3.1) (2020-07-27)
+
+
+### Fixes
+
+* Low severity vulnerabilities in dependencies ([cd3ce19](https://github.com/snatalenko/declarative-mapper/commit/cd3ce1982b98e8fbfc77e4f189dea67d1d1b5e96))
+
+### Changes
+
+* Use default values and examples for sample data generation ([ebb4d12](https://github.com/snatalenko/declarative-mapper/commit/ebb4d12c884a85ee5faca9350991e26367bd4ee9))
+
+
 # [1.3.0](https://github.com/snatalenko/declarative-mapper/compare/v1.2.6...v1.3.0) (2020-07-11)
 
 
