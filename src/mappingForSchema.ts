@@ -18,17 +18,11 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 	const { title, type, properties, items } = schema;
 
 	if (type === 'object') {
-		if (!properties)
-			throw new TypeError(`"properties" definition is empty in "${title || JSON.stringify(schema)}"`);
-
 		return {
-			map: getObjectFields(properties)
+			map: getObjectFields(properties || {})
 		};
 	}
 	else if (type === 'array') {
-		if (!items)
-			throw new TypeError(`"items" definition is empty in "${title || JSON.stringify(schema)}"`);
-
 		if (Array.isArray(items)) {
 			const map: TPropertiesMap = {};
 			items.forEach((item, index) => {
@@ -37,7 +31,7 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 			return { map };
 		}
 		else {
-			const itemsMapping = mappingForSchema(items);
+			const itemsMapping = items ? mappingForSchema(items) : '';
 			return {
 				forEach: '',
 				map: typeof itemsMapping === 'object' && 'map' in itemsMapping ?
