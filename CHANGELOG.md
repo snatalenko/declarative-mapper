@@ -1,3 +1,11 @@
+## [1.3.3](https://github.com/snatalenko/declarative-mapper/compare/v1.3.2...v1.3.3) (2020-07-28)
+
+
+### Changes
+
+* Support `allOf`, `oneOf`, `anyOf` in mappingForSchema ([2f5ee35](https://github.com/snatalenko/declarative-mapper/commit/2f5ee350be7c5094e458c0ce48cf81e095bbe9e0))
+
+
 ## [1.3.2](https://github.com/snatalenko/declarative-mapper/compare/v1.3.1...v1.3.2) (2020-07-28)
 
 
