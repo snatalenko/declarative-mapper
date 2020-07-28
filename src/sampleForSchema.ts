@@ -33,10 +33,10 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		const combinedSchema = allOf.reduce((c, el) => ({ ...c, ...el }));
 		return sampleForSchema(combinedSchema);
 	}
-	else if(anyOf) {
+	else if (anyOf) {
 		return sampleForSchema(anyOf[0]);
 	}
-	else if(oneOf) {
+	else if (oneOf) {
 		return sampleForSchema(oneOf[0]);
 	}
 	else if (type === 'string') {
@@ -68,27 +68,24 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		return null;
 	}
 	else if (type === 'object') {
-		if (!properties)
-			throw new TypeError(`"properties" definition is empty in "${title || JSON.stringify(schema)}"`);
-
 		const r = {};
-		for (const [fieldName, fieldSchema] of Object.entries(properties))
+		for (const [fieldName, fieldSchema] of Object.entries(properties || {}))
 			r[fieldName] = sampleForSchema(fieldSchema);
 
 		return r;
 	}
 	else if (type === 'array') {
-		if (!items)
-			throw new TypeError(`"items" definition is empty in "${title || JSON.stringify(schema)}"`);
-
 		if (Array.isArray(items)) {
 			return items.map(sampleForSchema)
 		}
-		else {
+		else if(items) {
 			if (schema.minItems !== undefined)
 				return Array.from({ length: schema.minItems }, () => sampleForSchema(items));
 
 			return [sampleForSchema(items)];
+		}
+		else {
+			return [];
 		}
 	}
 	else {
