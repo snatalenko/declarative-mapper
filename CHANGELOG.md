@@ -1,3 +1,16 @@
+## [1.3.4](https://github.com/snatalenko/declarative-mapper/compare/v1.3.3...v1.3.4) (2020-07-28)
+
+
+### Fixes
+
+* Empty object mapping is detected as Array mapping ([5c178fc](https://github.com/snatalenko/declarative-mapper/commit/5c178fc98c8277d843c5ec856c6fb16bed45e404))
+
+### Changes
+
+* Handle `additionalProperties` in mapping/sampleForSchema ([3b5c7c5](https://github.com/snatalenko/declarative-mapper/commit/3b5c7c59e13bdee31b257792c71140c7f188a866))
+* Handle empty `properties` and`items` in sampleForSchema ([16f38bc](https://github.com/snatalenko/declarative-mapper/commit/16f38bceb5d4e0411c5d03bb5ca8e9f0a8f203b2))
+
+
 ## [1.3.3](https://github.com/snatalenko/declarative-mapper/compare/v1.3.2...v1.3.3) (2020-07-28)
 
 
