@@ -45,7 +45,10 @@ describe('sampleForSchema', () => {
 				foo: 'bar'
 			},
 			oneChoice: 'text',
-			multiChoice: 'text'
+			multiChoice: 'text',
+			withAdditionalProps: {
+				additionalProp1: 'text'
+			}
 		});
 	});
 

@@ -129,6 +129,12 @@
                     "type": "number"
                 }
             ]
+        },
+        "withAdditionalProps": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
         }
     }
 }

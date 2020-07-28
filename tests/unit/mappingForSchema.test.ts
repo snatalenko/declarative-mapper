@@ -56,7 +56,10 @@ describe('mappingForSchema', () => {
 					}
 				},
 				multiChoice: "\"text\"",
-				oneChoice: "\"text\""
+				oneChoice: "\"text\"",
+				withAdditionalProps: {
+					map: {}
+				}
 			}
 		});
 
@@ -94,7 +97,8 @@ describe('mappingForSchema', () => {
 				foo: 'bar'
 			},
 			oneChoice: 'text',
-			multiChoice: 'text'
+			multiChoice: 'text',
+			withAdditionalProps: {}
 		});
 	});
 

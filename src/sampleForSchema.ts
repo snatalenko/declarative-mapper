@@ -9,6 +9,7 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		title,
 		type,
 		properties,
+		additionalProperties,
 		items,
 		minimum,
 		exclusiveMinimum,
@@ -71,6 +72,9 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		const r = {};
 		for (const [fieldName, fieldSchema] of Object.entries(properties || {}))
 			r[fieldName] = sampleForSchema(fieldSchema);
+
+		if (typeof additionalProperties === 'object' && additionalProperties)
+			r['additionalProp1'] = sampleForSchema(additionalProperties);
 
 		return r;
 	}
