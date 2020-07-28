@@ -10,7 +10,7 @@ function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
 		return;
 	}
 
-	const isArray = keys.every(k => k && !isNaN(Number(k)));
+	const isArray = keys.length && keys.every(k => k && !isNaN(Number(k)));
 
 	if (isArray)
 		yield `${prefix}  return Object.assign([], {`;
