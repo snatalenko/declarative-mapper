@@ -90,6 +90,45 @@
                     }
                 }
             ]
+        },
+        "complexObject": {
+            "allOf": [
+                {
+                    "title": "Complex Object",
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "foo": {
+                            "type": "string",
+                            "enum": [
+                                "bar"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "multiChoice": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "number"
+                }
+            ]
+        },
+        "oneChoice": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "number"
+                }
+            ]
         }
     }
 }

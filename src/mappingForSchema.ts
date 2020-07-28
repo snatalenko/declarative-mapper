@@ -15,9 +15,19 @@ function getObjectFields(obj: { [k: string]: JSONSchema4 }): TPropertiesMap {
  */
 export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 
-	const { title, type, properties, items } = schema;
+	const { title, type, properties, items, allOf, anyOf, oneOf } = schema;
 
-	if (type === 'object') {
+	if (allOf) {
+		const combinedSchema = allOf.reduce((c, el) => ({ ...c, ...el }));
+		return mappingForSchema(combinedSchema);
+	}
+	else if(anyOf) {
+		return mappingForSchema(anyOf[0]);
+	}
+	else if(oneOf) {
+		return mappingForSchema(oneOf[0]);
+	}
+	else if (type === 'object') {
 		return {
 			map: getObjectFields(properties || {})
 		};
@@ -40,7 +50,7 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 			};
 		}
 	}
-	else if(type === 'boolean' || type === 'integer' || type === 'null' || type === 'number' || type === 'string') {
+	else if (type === 'boolean' || type === 'integer' || type === 'null' || type === 'number' || type === 'string') {
 		return JSON.stringify(sampleForSchema(schema));
 	}
 	else {

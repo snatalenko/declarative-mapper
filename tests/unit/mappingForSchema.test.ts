@@ -49,7 +49,14 @@ describe('mappingForSchema', () => {
 							}
 						}
 					}
-				}
+				},
+				complexObject: {
+					map: {
+						foo: "\"bar\""
+					}
+				},
+				multiChoice: "\"text\"",
+				oneChoice: "\"text\""
 			}
 		});
 
@@ -82,7 +89,12 @@ describe('mappingForSchema', () => {
 				'text',
 				1,
 				{ foo: 'bar' }
-			]
+			],
+			complexObject: {
+				foo: 'bar'
+			},
+			oneChoice: 'text',
+			multiChoice: 'text'
 		});
 	});
 

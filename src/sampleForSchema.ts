@@ -17,7 +17,10 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		minLength,
 		maxLength,
 		example,
-		default: defaultValue
+		default: defaultValue,
+		allOf,
+		anyOf,
+		oneOf
 	} = schema;
 
 	if (example)
@@ -26,7 +29,17 @@ export default function sampleForSchema(schema: JSONSchema4) {
 	if (defaultValue)
 		return defaultValue;
 
-	if (type === 'string') {
+	if (allOf) {
+		const combinedSchema = allOf.reduce((c, el) => ({ ...c, ...el }));
+		return sampleForSchema(combinedSchema);
+	}
+	else if(anyOf) {
+		return sampleForSchema(anyOf[0]);
+	}
+	else if(oneOf) {
+		return sampleForSchema(oneOf[0]);
+	}
+	else if (type === 'string') {
 		if (schema.enum && typeof schema.enum[0] === 'string')
 			return schema.enum[0];
 
