@@ -1,3 +1,11 @@
+## [1.3.2](https://github.com/snatalenko/declarative-mapper/compare/v1.3.1...v1.3.2) (2020-07-28)
+
+
+### Changes
+
+* Handle empty `properties` and `items` in mappingForSchema ([937996a](https://github.com/snatalenko/declarative-mapper/commit/937996a8a68a00c405ff88081a9f4f7605cad439))
+
+
 ## [1.3.1](https://github.com/snatalenko/declarative-mapper/compare/v1.3.0...v1.3.1) (2020-07-27)
 
 
