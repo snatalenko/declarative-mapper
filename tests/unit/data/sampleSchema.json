@@ -2,6 +2,14 @@
     "$schema": "http://json-schema.org/draft-04/schema",
     "type": "object",
     "properties": {
+        "id": {
+            "type": "string",
+            "readOnly": true,
+            "minLength": 32,
+            "maxLength": 32,
+            "example": "00000000000000000000000000000000",
+            "pattern": "/^[0-9a-fA-F\\-]{32,36}$/"
+        },
         "longText": {
             "type": "string",
             "minLength": 10,

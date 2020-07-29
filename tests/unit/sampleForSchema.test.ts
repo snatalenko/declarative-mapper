@@ -15,6 +15,7 @@ describe('sampleForSchema', () => {
 		const sample = sampleForSchema(sampleSchema as JSONSchema4);
 
 		expect(sample).to.eql({
+			id: "00000000000000000000000000000000",
 			longText: 'texttextte',
 			shortText: 'te',
 			textWithExample: 'example 1',

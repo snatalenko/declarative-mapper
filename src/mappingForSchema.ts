@@ -5,6 +5,9 @@ import { default as sampleForSchema } from './sampleForSchema';
 function getObjectFields(obj: { [k: string]: JSONSchema4 }): TPropertiesMap {
 	const map: TPropertiesMap = {};
 	for (const [fieldName, fieldSchema] of Object.entries(obj)) {
+		if (fieldSchema.readOnly)
+			continue;
+
 		map[fieldName] = mappingForSchema(fieldSchema);
 	}
 	return map;
@@ -21,10 +24,10 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 		const combinedSchema = allOf.reduce((c, el) => ({ ...c, ...el }));
 		return mappingForSchema(combinedSchema);
 	}
-	else if(anyOf) {
+	else if (anyOf) {
 		return mappingForSchema(anyOf[0]);
 	}
-	else if(oneOf) {
+	else if (oneOf) {
 		return mappingForSchema(oneOf[0]);
 	}
 	else if (type === 'object') {
