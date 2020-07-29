@@ -1,3 +1,11 @@
+## [1.3.5](https://github.com/snatalenko/declarative-mapper/compare/v1.3.4...v1.3.5) (2020-07-29)
+
+
+### Changes
+
+* Support `readOnly` property in mappingForSchema ([4cbce91](https://github.com/snatalenko/declarative-mapper/commit/4cbce91d88fbdb99f4f500a2bdcd73ea5dd4b41a))
+
+
 ## [1.3.4](https://github.com/snatalenko/declarative-mapper/compare/v1.3.3...v1.3.4) (2020-07-28)
 
 
