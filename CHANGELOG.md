@@ -1,3 +1,11 @@
+## [1.3.6](https://github.com/snatalenko/declarative-mapper/compare/v1.3.5...v1.3.6) (2020-08-01)
+
+
+### Fixes
+
+* Objects concatenation in schema allOf ([64dfdb7](https://github.com/snatalenko/declarative-mapper/commit/64dfdb75e2a4b60bc2d5b5dfabcc1d7368301b02))
+
+
 ## [1.3.5](https://github.com/snatalenko/declarative-mapper/compare/v1.3.4...v1.3.5) (2020-07-29)
 
 
