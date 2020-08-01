@@ -52,7 +52,8 @@ describe('mappingForSchema', () => {
 				},
 				complexObject: {
 					map: {
-						foo: "\"bar\""
+						foo: "\"bar\"",
+						baz: "true"
 					}
 				},
 				multiChoice: "\"text\"",
@@ -94,7 +95,8 @@ describe('mappingForSchema', () => {
 				{ foo: 'bar' }
 			],
 			complexObject: {
-				foo: 'bar'
+				foo: 'bar',
+				baz: true
 			},
 			oneChoice: 'text',
 			multiChoice: 'text',

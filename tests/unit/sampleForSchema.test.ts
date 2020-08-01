@@ -43,7 +43,8 @@ describe('sampleForSchema', () => {
 				}
 			],
 			complexObject: {
-				foo: 'bar'
+				foo: 'bar',
+				baz: true
 			},
 			oneChoice: 'text',
 			multiChoice: 'text',

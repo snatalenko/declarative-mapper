@@ -115,6 +115,14 @@
                             ]
                         }
                     }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "baz": {
+                            "type": "boolean"
+                        }
+                    }
                 }
             ]
         },

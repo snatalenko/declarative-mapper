@@ -1,6 +1,7 @@
 import { TPropertiesMap, TValueMap } from "./TMapping";
 import { JSONSchema4 } from 'json-schema';
 import { default as sampleForSchema } from './sampleForSchema';
+import { default as mergeSchema } from './utils/mergeSchema';
 
 function getObjectFields(obj: { [k: string]: JSONSchema4 }): TPropertiesMap {
 	const map: TPropertiesMap = {};
@@ -21,7 +22,7 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 	const { title, type, properties, items, allOf, anyOf, oneOf } = schema;
 
 	if (allOf) {
-		const combinedSchema = allOf.reduce((c, el) => ({ ...c, ...el }));
+		const combinedSchema = allOf.reduce(mergeSchema);
 		return mappingForSchema(combinedSchema);
 	}
 	else if (anyOf) {

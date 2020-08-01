@@ -1,4 +1,5 @@
 import { JSONSchema4 } from 'json-schema';
+import { default as mergeSchema } from './utils/mergeSchema';
 
 /**
  * Create sample data for a given JSON schema
@@ -31,7 +32,7 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		return defaultValue;
 
 	if (allOf) {
-		const combinedSchema = allOf.reduce((c, el) => ({ ...c, ...el }));
+		const combinedSchema = allOf.reduce(mergeSchema);
 		return sampleForSchema(combinedSchema);
 	}
 	else if (anyOf) {
