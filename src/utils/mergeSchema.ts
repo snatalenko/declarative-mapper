@@ -13,13 +13,14 @@ function getUniqueValues<TElement>(arr: TElement[]): TElement[] {
 };
 
 export default function mergeSchema(dest: JSONSchema4, src: JSONSchema4): JSONSchema4 {
+	const result = { ...dest };
 	for (const key of Object.keys(src)) {
 		if (isObject(src[key]) && isObject(dest[key]))
-			dest[key] = mergeSchema(dest[key], src[key]);
+			result[key] = mergeSchema(dest[key], src[key]);
 		else if (Array.isArray(src[key]) && Array.isArray(dest[key]))
-			dest[key] = getUniqueValues([...dest[key], ...src[key]]);
+			result[key] = getUniqueValues([...dest[key], ...src[key]]);
 		else
-			dest[key] = src[key];
+			result[key] = src[key];
 	}
-	return dest;
+	return result;
 };
