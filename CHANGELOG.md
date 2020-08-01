@@ -1,3 +1,11 @@
+## [1.3.7](https://github.com/snatalenko/declarative-mapper/compare/v1.3.6...v1.3.7) (2020-08-01)
+
+
+### Fixes
+
+* Destination shema modificaiton on allOf schemas merge ([9dc782f](https://github.com/snatalenko/declarative-mapper/commit/9dc782fa37cb971e34237ab7ee05034f0048f3eb))
+
+
 ## [1.3.6](https://github.com/snatalenko/declarative-mapper/compare/v1.3.5...v1.3.6) (2020-08-01)
 
 
