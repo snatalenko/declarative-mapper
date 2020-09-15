@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://github.com/snatalenko/declarative-mapper/mapping",
+    "title": "Mapping Schema",
+    "description": "",
+    "$ref": "#/definitions/TFieldsMap",
+    "definitions": {
+        "TFieldsMap": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+                "anyOf": [
+                    {
+                        "title": "Simple type mapping",
+                        "type": "string"
+                    },
+                    {
+                        "title": "Object mapping",
+                        "$ref": "#/definitions/TExplicitObjectMapping"
+                    },
+                    {
+                        "title": "Array mapping",
+                        "$ref": "#/definitions/TArrayMapping"
+                    },
+                    {
+                        "title": "Object mapping in context",
+                        "$ref": "#/definitions/TObjectInContextMapping"
+                    },
+                    {
+                        "title": "Complex type mapping",
+                        "$ref": "#/definitions/TFieldsMap"
+                    }
+                ]
+            }
+        },
+        "TExplicitObjectMapping": {
+            "title": "Object mapping",
+            "type": "object",
+            "properties": {
+                "map": {
+                    "$ref": "#/definitions/TFieldsMap"
+                }
+            },
+            "required": [
+                "map"
+            ],
+            "additionalProperties": false
+        },
+        "TArrayMapping": {
+            "title": "Array mapping",
+            "type": "object",
+            "properties": {
+                "forEach": {
+                    "type": "string"
+                },
+                "map": {
+                    "$ref": "#/definitions/TFieldsMap"
+                }
+            },
+            "required": [
+                "forEach",
+                "map"
+            ],
+            "additionalProperties": false
+        },
+        "TObjectInContextMapping": {
+            "title": "Object mapping in context",
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "map": {
+                    "$ref": "#/definitions/TFieldsMap"
+                }
+            },
+            "required": [
+                "from",
+                "map"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
