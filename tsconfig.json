@@ -2,7 +2,7 @@
     "compileOnSave": true,
     "compilerOptions": {
         "module": "CommonJS",
-        "removeComments": true,
+        "removeComments": false,
         "sourceMap": true,
         "alwaysStrict": false,
         "outDir": "./dist",
