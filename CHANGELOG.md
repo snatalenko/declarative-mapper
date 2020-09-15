@@ -1,3 +1,15 @@
+## [1.4.1](https://github.com/snatalenko/declarative-mapper/compare/v1.4.0...v1.4.1) (2020-09-15)
+
+
+### Fixes
+
+* Vulnerability in dev dependency ([2525e3b](https://github.com/snatalenko/declarative-mapper/commit/2525e3bf98e2e671f60eaae161215fb1af26aab5))
+
+### Build System
+
+* Run npm audit before new version assign ([79cbbd6](https://github.com/snatalenko/declarative-mapper/commit/79cbbd6ded0d75b5b71df519349370db7a32654b))
+
+
 # [1.4.0](https://github.com/snatalenko/declarative-mapper/compare/v1.3.7...v1.4.0) (2020-09-15)
 
 
