@@ -3,42 +3,54 @@
     "id": "https://github.com/snatalenko/declarative-mapper/mapping",
     "title": "Mapping Schema",
     "description": "",
-    "$ref": "#/definitions/TFieldsMap",
+    "$ref": "#/definitions/TValue",
     "definitions": {
-        "TFieldsMap": {
+        "TValue": {
+            "anyOf": [
+                {
+                    "title": "Constant or variable",
+                    "type": "string"
+                },
+                {
+                    "title": "Object implicit mapping",
+                    "$ref": "#/definitions/TObjectFieldsMap"
+                },
+                {
+                    "title": "Object explicit mapping",
+                    "$ref": "#/definitions/TObjectMapping"
+                },
+                {
+                    "title": "Object in context mapping",
+                    "$ref": "#/definitions/TObjectInContextMapping"
+                },
+                {
+                    "title": "Array mapping",
+                    "$ref": "#/definitions/TArrayMapping"
+                },
+                {
+                    "title": "Array elements mapping",
+                    "$ref": "#/definitions/TArrayElementsMap"
+                }
+            ]
+        },
+        "TObjectFieldsMap": {
             "type": "object",
             "minProperties": 1,
             "additionalProperties": {
-                "anyOf": [
-                    {
-                        "title": "Simple type mapping",
-                        "type": "string"
-                    },
-                    {
-                        "title": "Object mapping",
-                        "$ref": "#/definitions/TExplicitObjectMapping"
-                    },
-                    {
-                        "title": "Array mapping",
-                        "$ref": "#/definitions/TArrayMapping"
-                    },
-                    {
-                        "title": "Object mapping in context",
-                        "$ref": "#/definitions/TObjectInContextMapping"
-                    },
-                    {
-                        "title": "Complex type mapping",
-                        "$ref": "#/definitions/TFieldsMap"
-                    }
-                ]
+                "$ref": "#/definitions/TValue"
             }
         },
-        "TExplicitObjectMapping": {
-            "title": "Object mapping",
+        "TArrayElementsMap": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/TValue"
+            }
+        },
+        "TObjectMapping": {
             "type": "object",
             "properties": {
                 "map": {
-                    "$ref": "#/definitions/TFieldsMap"
+                    "$ref": "#/definitions/TObjectFieldsMap"
                 }
             },
             "required": [
@@ -47,14 +59,13 @@
             "additionalProperties": false
         },
         "TArrayMapping": {
-            "title": "Array mapping",
             "type": "object",
             "properties": {
                 "forEach": {
                     "type": "string"
                 },
                 "map": {
-                    "$ref": "#/definitions/TFieldsMap"
+                    "$ref": "#/definitions/TObjectFieldsMap"
                 }
             },
             "required": [
@@ -64,14 +75,13 @@
             "additionalProperties": false
         },
         "TObjectInContextMapping": {
-            "title": "Object mapping in context",
             "type": "object",
             "properties": {
                 "from": {
                     "type": "string"
                 },
                 "map": {
-                    "$ref": "#/definitions/TFieldsMap"
+                    "$ref": "#/definitions/TObjectFieldsMap"
                 }
             },
             "required": [

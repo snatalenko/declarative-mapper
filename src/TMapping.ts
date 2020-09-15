@@ -2,7 +2,7 @@ export type TValueMap = string | TObjectMapping | TArrayMapping | TObjectInConte
 
 export type TPropertiesMap = {
 	[fieldName: string]: TValueMap
-}
+} | Array<TValueMap>;
 
 export type TObjectMapping = {
 	map: TPropertiesMap

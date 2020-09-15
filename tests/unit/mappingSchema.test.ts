@@ -11,7 +11,7 @@ describe('mappingSchema', () => {
 
 	it('successfully validates correct mapping', () => {
 
-		let map: object = {
+		let map: any = {
 			foo: 'bar'
 		};
 
@@ -56,15 +56,29 @@ describe('mappingSchema', () => {
 
 		v.validate(map, schema, { throwError: true });
 
+		map = [
+			'foo',
+			{
+				bar: 'baz'
+			}
+		];
+
+		v.validate(map, schema, { throwError: true });
+
+		map = 'foo';
+
+		v.validate(map, schema, { throwError: true });
 	});
 
 	it('shows errors in incorrect mapping', () => {
+
+		const NOT_ANY_OF_MSG = 'is not any of "Constant or variable","Object implicit mapping","Object explicit mapping","Object in context mapping","Array mapping","Array elements mapping"';
 
 		let map = {};
 
 		expect(v.validate(map, schema)).to.have.nested.property('errors.0').that.includes({
 			property: 'instance',
-			message: 'does not meet minimum property length of 1'
+			message: NOT_ANY_OF_MSG
 		});
 
 		map = {
@@ -72,13 +86,8 @@ describe('mappingSchema', () => {
 		};
 
 		expect(v.validate(map, schema)).to.have.nested.property('errors.0').that.includes({
-			property: 'instance.foo',
-			message: 'is not any of "Simple type mapping","Object mapping","Array mapping","Object mapping in context","Complex type mapping"'
-		});
-
-		expect(v.validate(map, schema)).to.have.nested.property('errors.0').that.includes({
-			property: 'instance.foo',
-			message: 'is not any of "Simple type mapping","Object mapping","Array mapping","Object mapping in context","Complex type mapping"'
+			property: 'instance',
+			message: NOT_ANY_OF_MSG
 		});
 	});
 });

@@ -38,7 +38,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 
 	const prefix = '  '.repeat(level);
 
-	if ('forEach' in mapping) {
+	if ('forEach' in mapping && !Array.isArray(mapping)) {
 		const { forEach, map } = mapping as TArrayMapping;
 		if (!forEach)
 			throw new TypeError(`Property "forEach" is empty in mapping "${JSON.stringify(mapping)}"`);

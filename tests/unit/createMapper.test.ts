@@ -103,6 +103,50 @@ describe('createMapper', () => {
 		});
 	});
 
+	it('maps array from array element index maps', () => {
+
+		const input = {
+			foo: 'bar'
+		};
+
+		const map1 = {
+			'0': 'foo',
+			'1': '"baz"'
+		};
+
+		const result1 = createMapper(map1)(input);
+
+		expect(result1).to.eql([
+			'bar',
+			'baz'
+		]);
+
+		const map2 = [
+			'foo',
+			'"baz"'
+		];
+
+		const result2 = createMapper(map2)(input);
+
+		expect(result2).to.eql([
+			'bar',
+			'baz'
+		]);
+
+		const map3 = {
+			map: [
+				'foo',
+				'"baz"'
+			]
+		};
+
+		const result3 = createMapper(map3)(input);
+
+		expect(result3).to.eql([
+			'bar',
+			'baz'
+		]);
+	});
 
 	it('logs script body as a trace output to logger', () => {
 

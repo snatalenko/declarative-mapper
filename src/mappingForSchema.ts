@@ -1,4 +1,4 @@
-import { TPropertiesMap, TValueMap } from "./TMapping";
+import { TArrayMapping, TPropertiesMap, TValueMap } from "./TMapping";
 import { JSONSchema4 } from 'json-schema';
 import { default as sampleForSchema } from './sampleForSchema';
 import { default as mergeSchema } from './utils/mergeSchema';
@@ -51,7 +51,7 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 				map: typeof itemsMapping === 'object' && 'map' in itemsMapping ?
 					itemsMapping.map :
 					{ '*': itemsMapping }
-			};
+			} as TArrayMapping;
 		}
 	}
 	else if (type === 'boolean' || type === 'integer' || type === 'null' || type === 'number' || type === 'string') {
