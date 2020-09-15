@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/snatalenko/declarative-mapper/compare/v1.3.7...v1.4.0) (2020-09-15)
+
+
+### Features
+
+* Array elements mapping using JS array declaration syntax ([76fb5d5](https://github.com/snatalenko/declarative-mapper/commit/76fb5d5a482306ffce894043c903d04484fe4831))
+* Mapping JSON schema ([6f168da](https://github.com/snatalenko/declarative-mapper/commit/6f168da7058003618faa29a0203fc9fc4faf690e))
+
+### Fixes
+
+* Comments in type definitions ([3fc9043](https://github.com/snatalenko/declarative-mapper/commit/3fc9043f6472c03bcdd5fb800ec3382b284a9daa))
+
+
 ## [1.3.7](https://github.com/snatalenko/declarative-mapper/compare/v1.3.6...v1.3.7) (2020-08-01)
 
 
