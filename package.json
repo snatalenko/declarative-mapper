@@ -14,7 +14,7 @@
     "test:watch": "mocha -r ts-node/register --watch --watch-files src, tests/unit/*.ts",
     "changelog": "conventional-changelog -n ./scripts/changelog -i CHANGELOG.md -s",
     "prepack": "npm t && tsc",
-    "preversion": "npm t",
+    "preversion": "npm audit --audit-level=low && npm t",
     "version": "npm run changelog && git add CHANGELOG.md"
   },
   "repository": {
