@@ -1,3 +1,11 @@
+## [1.4.2](https://github.com/snatalenko/declarative-mapper/compare/v1.4.1...v1.4.2) (2020-09-15)
+
+
+### Fixes
+
+* Export common type declarations ([6a1ecad](https://github.com/snatalenko/declarative-mapper/commit/6a1ecadcb62f684de1aa80689908271d1b60228a))
+
+
 ## [1.4.1](https://github.com/snatalenko/declarative-mapper/compare/v1.4.0...v1.4.1) (2020-09-15)
 
 
