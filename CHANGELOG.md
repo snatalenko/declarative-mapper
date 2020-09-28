@@ -1,3 +1,11 @@
+## [1.4.3](https://github.com/snatalenko/declarative-mapper/compare/v1.4.2...v1.4.3) (2020-09-28)
+
+
+### Fixes
+
+* Sample generation for non-string enums ([c7f3921](https://github.com/snatalenko/declarative-mapper/commit/c7f39215eb8560df5ed3525a3cb214fc8b539923))
+
+
 ## [1.4.2](https://github.com/snatalenko/declarative-mapper/compare/v1.4.1...v1.4.2) (2020-09-15)
 
 
