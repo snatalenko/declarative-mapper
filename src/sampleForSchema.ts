@@ -41,10 +41,10 @@ export default function sampleForSchema(schema: JSONSchema4) {
 	else if (oneOf) {
 		return sampleForSchema(oneOf[0]);
 	}
+	else if(schema.enum && schema.enum.length) {
+		return schema.enum[0];
+	}
 	else if (type === 'string') {
-		if (schema.enum && typeof schema.enum[0] === 'string')
-			return schema.enum[0];
-
 		return minLength ?
 			'text'.padEnd(minLength, 'text') :
 			'text'.substr(0, maxLength !== undefined ? maxLength : 4);
