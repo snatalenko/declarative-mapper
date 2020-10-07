@@ -1,3 +1,11 @@
+## [1.4.4](https://github.com/snatalenko/declarative-mapper/compare/v1.4.3...v1.4.4) (2020-10-07)
+
+
+### Fixes
+
+* Incorrect mapping of 1-element arrays without 'map' keyword ([0996dca](https://github.com/snatalenko/declarative-mapper/commit/0996dca442f8272f7d4b27ef5c570ba0222e975b))
+
+
 ## [1.4.3](https://github.com/snatalenko/declarative-mapper/compare/v1.4.2...v1.4.3) (2020-09-28)
 
 
