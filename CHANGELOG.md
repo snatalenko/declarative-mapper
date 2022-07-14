@@ -1,3 +1,16 @@
+## [1.4.5](https://github.com/snatalenko/declarative-mapper/compare/v1.4.4...v1.4.5) (2022-07-14)
+
+
+### Fixes
+
+* Vulnerabilities in dev dependencies ([e2a7963](https://github.com/snatalenko/declarative-mapper/commit/e2a79634d3b2f6d690f5e53fe8f7795bb7f4107b))
+
+### Changes
+
+* Bump y18n from 4.0.0 to 4.0.1 ([df03154](https://github.com/snatalenko/declarative-mapper/commit/df03154945e625f535f985ebaf10a8c1e4f762c9))
+* Use original `sandbox` obj as VM context for mapping execution ([a55beb0](https://github.com/snatalenko/declarative-mapper/commit/a55beb04c2bb8cb71a088caf65a58f61be1fb7ad))
+
+
 ## [1.4.4](https://github.com/snatalenko/declarative-mapper/compare/v1.4.3...v1.4.4) (2020-10-07)
 
 
