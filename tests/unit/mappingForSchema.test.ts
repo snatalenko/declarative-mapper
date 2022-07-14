@@ -107,7 +107,7 @@ describe('mappingForSchema', () => {
 	it('throws TypeError when type is not described', () => {
 
 		const brokenSchema0 = clone(sampleSchema);
-		delete brokenSchema0.properties.longText.type;
+		delete (brokenSchema0.properties.longText as any).type;
 
 		expect(() => {
 			mappingForSchema(brokenSchema0 as JSONSchema4);
@@ -117,14 +117,14 @@ describe('mappingForSchema', () => {
 	it('does not throw Error when properties are not described', () => {
 
 		const brokenSchema1 = clone(sampleSchema);
-		delete brokenSchema1.properties.array.items;
+		delete (brokenSchema1.properties.array as any).items;
 
 		expect(() => {
 			mappingForSchema(brokenSchema1 as JSONSchema4);
 		}).to.not.throw(TypeError);
 
 		const brokenSchema2 = clone(sampleSchema);
-		delete brokenSchema2.properties.array.items.properties;
+		delete (brokenSchema2.properties.array.items as any).properties;
 
 		expect(() => {
 			mappingForSchema(brokenSchema2 as JSONSchema4);

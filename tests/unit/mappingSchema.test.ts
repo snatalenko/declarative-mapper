@@ -5,7 +5,7 @@ import { expect } from 'chai';
 describe('mappingSchema', () => {
 
 	let v: Validator;
-	before(() => {
+	beforeAll(() => {
 		v = new Validator();
 	})
 
