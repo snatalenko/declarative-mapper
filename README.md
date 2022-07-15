@@ -10,8 +10,8 @@ Declarative Mapper for NodeJS
 
 - **Declarative** - to allow mapping configuration from user interface
 - **Flexible** - run JS underneath to allow any kind of instructions
-- **Secure** - run in own context and restrict access to outside environment
-- **Fast** - to map hundreds of thousands documents within a second
+- **Secure** - restricts access to outside environment by executing mapping in a separate [V8 Virtual Machine](https://nodejs.org/api/vm.html) context
+- **Fast** - to map hundreds of thousands documents within a second (~200k/sec on Apple M1 Pro)
 - **Typed** - for less errors and easier mapping with intellisense
 - **Lightweight** - without dependencies
 
@@ -40,7 +40,199 @@ expect(result).to.eql({
 });
 ```
 
-More advanced one:
+## Mapping Instructions
+
+In mapping JSON, left side is a key in the resulting object, right side is either a string with a valid JS expression, or an object with mapping instructions.
+
+| Expression  | Description  |
+| --- | --- |
+| `"key": "100"`  | numeric value, produces `"key": 100`  |
+| `"key": "true"`  | boolean value, produces `"key": true`  |
+| `"key": "\"test\""` or<br /> `"key": "'text'"`  |  text value. as you can see, it has its own quotation marks. produces `"key": "text"`  |
+| `"key": "foo"`  | access to an input variable `foo`  |
+| `"key": "Number(foo)"`  | access to an input variable `foo` converted to a number, produces `"key": 100`  |
+| `"key": "arr.filter(el => ...)"`  | more complex JS expression that produces an array  |
+| `"key": { … }`  | object mapping, where “…” contains inner properties  |
+| `"key": { "map": { … } }`  | same as above, but more verbose  |
+| `"key": { "forEach": "…", "map": { … } }`  | array mapped from input  |
+| `"key": { "0": { … }, "1": { … } }`  | array with a predefined set of elements  |
+| `"key": { "from": "…", "map": { … } }`  | object mapping from a different context   |
+
+
+### Objects
+
+Mapping of an object with inner properties:
+
+```json
+  "key": {
+    "foo": "-1"
+  }
+```
+or
+
+```json
+  "key": {
+    "map": {
+      "foo": "-1"
+    }
+  } 
+```
+
+Both above examples produce same result (despite that the second example is more verbose and made to have a consistent format with array mappings):
+
+```json
+  "key": {
+    "foo": -1
+  } 
+```
+
+### Arrays
+
+Let's assume we have an input with an array of objects in it, and we need to produce an array of objects, one for each element in the input. In a such case the `"forEach": "", "map": {}` construction can be used:
+
+```json
+{
+  "inputArray": [{
+    "arrayInnerProp": "value1"
+  }, {
+    "arrayInnerProp": "value2"
+  }]
+}
+```
+
+```json
+  "key": {
+    "forEach": "inputArray",
+    "map": {
+      "foo": "arrayInnerProperty"
+    }
+  }
+```
+
+Result: 
+
+```json
+  "key": [{
+    "foo": "value1"
+  }, {
+    "foo": "value2"
+  }]
+```
+
+Note that the execution context in a such mapping shifts into the input objects and inner properties can be referenced directly as `arrayInnerProperty` instead of `inputArray[index].arrayInnerProperty`. More on that in the [Context Switching](#context-switching)
+
+
+#### String[] from Object[]
+
+In case array should contain plain values instead of objects, left side of the expression should contain `"*"` instead of the key name:
+
+```json
+  "key": {
+    "forEach": "inputArray",
+    "map": {
+      "*": "arrayInnerProperty"
+    }
+  }
+```
+
+Produces:
+
+```json
+  "key": [
+    "value1",
+    "value2"
+  ]
+```
+
+#### String[] from String[]
+
+Arrays with simple values can be mapped in a same way, while current iterating element can accessed as `$record`:
+
+```json
+{
+  "inputValues": [1, 2, 3]
+}
+```
+
+```json
+{
+  "forEach": "inputValues",
+  "map": {
+    "*": "$record * 2"
+  }
+}
+```
+
+Result:
+
+```json
+[2, 4, 6]
+```
+
+### Array with predefined set of elements
+
+In case array should have a predefined set of elements, each of the elements can be mapped by its index:
+
+```json
+  "key": {
+    "0": {
+      "foo": "\"text1\""
+    },
+    "2": "1000"
+  }
+```
+
+Result:
+
+```json
+  "key": [
+    {
+      "foo": "text1"
+    },
+    null,
+    1000
+  ]
+```
+
+
+
+### Context Switching
+
+When arrays are mapped with the `"forEach": "", "map": {}` statement, the execution context switches automatically to the objects selected by `forEach` ([see above](#arrays)). Similar technique can be useful when a large number of properties need to be mapped from an object located outside of the current execution context. In a such case the `"from": "", "map": {}` statement can be used.
+
+
+
+Down in the source tree:
+
+```json
+  "key": {
+    "from": "field.innerArray[0].innerObject",
+    "map": {
+      "foo": "nestedProperty"
+    }
+  }
+```
+
+Or up in the source document:
+
+```json
+  "key": {
+    "from": "$input.rootLevelProperty",
+    "map": {
+      "foo": "nestedProperty"
+    }
+  }
+```
+
+Here are the special variables that can be handy for the context switching:
+
+- `$record` - current element of the array being iterated with `forEach`
+- `$index` - index of the current array element
+- `$collection` - entire collection of the elements being iterated
+- `$input` - entire document passed as mapping input
+
+
+## Complex Mapping Example
 
 ```ts
 // Some kind of a document we expect on input
