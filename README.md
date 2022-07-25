@@ -8,15 +8,17 @@ Declarative Mapper for NodeJS
 
 ## Reasoning
 
-- **Declarative** - to allow mapping configuration from user interface
+On a couple of projects I needed a library that would allow users to convert one JSON format to another (say, Invoice from one system to another). It should have operated with a **declarative mapping** instructions to allow configuration by users from UI. Also, it should have been **flexible** enough to accommodate various tricky requirements, but **secure**, to prevent JS injections. And **fast**, to process incoming streams with millions of records.
+
+That's where the "declarative-mapping" came in:
+
+- **Declarative** - declarative mapping instructions allows mapping configuration from UI. in simple scenarios no technical knowledge needed, but I still have plans to build a nicer mapping editor
 - **Flexible** - run JS underneath to allow any kind of instructions
 - **Secure** - restricts access to outside environment by executing mapping in a separate [V8 Virtual Machine](https://nodejs.org/api/vm.html) context
-- **Fast** - to map hundreds of thousands documents within a second (~200k/sec on Apple M1 Pro)
-- **Typed** - for less errors and easier mapping with intellisense
-- **Lightweight** - without dependencies
+- **Fast** - mapping instructions are compiled once on beginning, which allows to process ~200k obj/sec on Apple M1 Pro
+- **Typed** - written in TypeScript
+- **Lightweight** - no dependencies
 
-
-## Getting Started
 
 A simple example:
 
@@ -24,19 +26,30 @@ A simple example:
 import { createMapper } from 'declarative-mapper';
 import { expect } from 'chai';
 
+
+const sourceObject = {
+  foo: 'bar'
+};
+
+const mappingInstructions = {
+  myObj: {
+    myField: 'foo',
+    myFieldLength: 'foo.length'
+  }
+};
+
+
 // Convert declarative instructions to a pre-compiled
 // function that can be executed any number of times
-const mapper = createMapper({
-  foo: 'bar'
-});
+const mapper = createMapper(mappingInstructions);
 
-// Run the mapping on some input
-const result = mapper({
-  bar: 'baz'
-});
+const result = mapper(sourceObject);
 
 expect(result).to.eql({
-  foo: 'baz'
+  myObj: {
+    myField: 'bar',
+    myFieldLength: 3
+  }
 });
 ```
 
