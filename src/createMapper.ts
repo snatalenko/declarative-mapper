@@ -51,7 +51,7 @@ export default function createMapper<TSource, TResult>(map: TRootMapping, option
 		...options?.extensions
 	};
 
-	vm.createContext(sandbox);
+	const context = vm.createContext(sandbox);
 
 	return (document: TSource): TResult | undefined => {
 
@@ -64,7 +64,7 @@ export default function createMapper<TSource, TResult>(map: TRootMapping, option
 				throw new TypeError(`Extension "${conflictingKey}" conflicts with a field name passed in input`);
 		}
 
-		script.runInContext(sandbox);
+		script.runInContext(context);
 
 		return context.$result;
 	};
