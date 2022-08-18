@@ -1,3 +1,11 @@
+## [1.4.6](https://github.com/snatalenko/declarative-mapper/compare/v1.4.5...v1.4.6) (2022-08-18)
+
+
+### Documentation
+
+* Add mapping instructions ([a3d32a6](https://github.com/snatalenko/declarative-mapper/commit/a3d32a66e00ea4fcf5f68bd5f7890e031bfb1970))
+
+
 ## [1.4.5](https://github.com/snatalenko/declarative-mapper/compare/v1.4.4...v1.4.5) (2022-07-14)
 
 
