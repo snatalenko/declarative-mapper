@@ -55,8 +55,8 @@ export default function createMapper<TSource, TResult>(map: TRootMapping, option
 
 	return (document: TSource): TResult | undefined => {
 
-		sandbox.$input = document;
-		sandbox.$result = undefined;
+		context.$input = document;
+		context.$result = undefined;
 
 		if (extensionNames) {
 			const conflictingKey = Object.keys(document).find(inputKey => extensionNames.includes(inputKey));
@@ -66,6 +66,6 @@ export default function createMapper<TSource, TResult>(map: TRootMapping, option
 
 		script.runInContext(sandbox);
 
-		return sandbox.$result;
+		return context.$result;
 	};
 };
