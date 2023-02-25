@@ -59,7 +59,8 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
 
 		yield `${prefix}  (() => {`;
-		yield `${prefix}    with (${from}) {`
+		yield `${prefix}    var $context = ${from} ?? {};`;
+		yield `${prefix}    with ($context) {`
 		yield* propertiesMapToJs(map, level + 2);
 		yield `${prefix}    }`;
 		yield `${prefix}  })()`;

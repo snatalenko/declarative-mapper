@@ -84,9 +84,32 @@ describe('createMapper', () => {
 		const input = {
 			container: {
 				nested: {
-					bar: 'baz'
+					bar: 'baz',
+					bar2: 'baz2'
 				}
 			}
+		};
+
+		const mapper = createMapper({
+			from: 'container.nested',
+			map: {
+				foo: 'bar',
+				foo2: '$context.bar2'
+			}
+		});
+
+		const result = mapper(input);
+
+		expect(result).to.eql({
+			foo: 'baz',
+			foo2: 'baz2'
+		});
+	});
+
+	it('handles references to non-existing properties in `from` directive', () => {
+
+		const input = {
+			container: {}
 		};
 
 		const mapper = createMapper({
@@ -99,7 +122,7 @@ describe('createMapper', () => {
 		const result = mapper(input);
 
 		expect(result).to.eql({
-			foo: 'baz'
+			foo: undefined
 		});
 	});
 
