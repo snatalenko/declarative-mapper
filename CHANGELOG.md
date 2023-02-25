@@ -1,3 +1,11 @@
+## [1.5.1](https://github.com/snatalenko/declarative-mapper/compare/v1.5.0...v1.5.1) (2023-02-25)
+
+
+### Build System
+
+* Upgrade note to v16 ([795ef1b](https://github.com/snatalenko/declarative-mapper/commit/795ef1b1f972d57559e77f50a5f101ab01db7c64))
+
+
 # [1.5.0](https://github.com/snatalenko/declarative-mapper/compare/v1.4.6...v1.5.0) (2023-02-25)
 
 
