@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/snatalenko/declarative-mapper/compare/v1.4.6...v1.5.0) (2023-02-25)
+
+
+### Changes
+
+* `$context` property when mapping with `from` directive ([180d61c](https://github.com/snatalenko/declarative-mapper/commit/180d61c0f029ada022d1a708be07600ccb8195e8))
+
+### Build System
+
+* Update dev dependencies ([dba9278](https://github.com/snatalenko/declarative-mapper/commit/dba9278c0224e4ee44fc5c56826b61238b77eee4))
+* Add npm "build" script ([7de8612](https://github.com/snatalenko/declarative-mapper/commit/7de86122061573e9a61d955ddfb03b5bd5343d7a))
+
+
 ## [1.4.6](https://github.com/snatalenko/declarative-mapper/compare/v1.4.5...v1.4.6) (2022-08-18)
 
 
