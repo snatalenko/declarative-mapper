@@ -12,7 +12,8 @@
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
     "changelog": "conventional-changelog -n ./scripts/changelog -i CHANGELOG.md -s",
-    "prepack": "npm t && tsc",
+    "build": "tsc",
+    "prepack": "npm t && npm run build",
     "preversion": "npm audit --audit-level=low && npm t",
     "version": "npm run changelog && git add CHANGELOG.md"
   },
