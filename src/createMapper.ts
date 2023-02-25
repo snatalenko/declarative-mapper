@@ -33,7 +33,7 @@ type TMappingScriptEnvironment<TSource, TResult> = {
  * @param options.logger
  *  Logger instance for trace output
  */
-export default function createMapper<TSource, TResult>(map: TRootMapping, options?: {
+export default function createMapper<TSource extends object, TResult>(map: TRootMapping, options?: {
 	extensions?: object,
 	logger?: ILogger
 }) {
