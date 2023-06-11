@@ -1,3 +1,11 @@
+# [1.6.0](https://github.com/snatalenko/declarative-mapper/compare/v1.5.1...v1.6.0) (2023-06-11)
+
+
+### Changes
+
+* Stricter mapping json schema ([6ad783b](https://github.com/snatalenko/declarative-mapper/commit/6ad783b93ef78eda885304aa151d6c4c563d7443))
+
+
 ## [1.5.1](https://github.com/snatalenko/declarative-mapper/compare/v1.5.0...v1.5.1) (2023-02-25)
 
 
