@@ -1,0 +1,202 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "id": "https://github.com/snatalenko/declarative-mapper/mapping",
+    "title": "Mapping Schema for JSON Data Transformations",
+    "description": "A schema defining a structure for JSON mappings. Field names in the mappings correspond to fields in the destination JSON format, while field values can be any valid JavaScript expression.",
+    "oneOf": [
+        {
+            "$ref": "#/definitions/StrictMappingObject"
+        },
+        {
+            "$ref": "#/definitions/ObjectFieldsMapping"
+        }
+    ],
+    "examples": [
+        {
+            "title": "'Invoice 1'",
+            "items": {
+                "forEach": "LINE_ITEMS",
+                "map": {
+                    "code": "`X-${UPC}`",
+                    "qty": "QTY",
+                    "price": "PRICE",
+                    "amount": "QTY * PRICE"
+                }
+            },
+            "billTo": {
+                "from": "BUYER",
+                "map": {
+                    "name": "COMPANY_NAME",
+                    "address": "`${STREET}, ${CITY} ${STATE}, ${ZIP}`"
+                }
+            },
+            "total": "LINE_ITEMS.reduce((sum, i) => sum + (i.QTY * i.PRICE), 0)"
+        }
+    ],
+    "definitions": {
+        "AnyMapping": {
+            "oneOf": [
+                {
+                    "title": "JavaScript Expression",
+                    "$ref": "#/definitions/JsExpression"
+                },
+                {
+                    "title": "Strict Mapping Object",
+                    "$ref": "#/definitions/StrictMappingObject"
+                },
+                {
+                    "title": "Object Fields Mapping",
+                    "$ref": "#/definitions/ObjectFieldsMapping"
+                }
+            ]
+        },
+        "JsExpression": {
+            "title": "JavaScript Expression",
+            "description": "A valid JavaScript expression represented as a string. Will be evaluated in the context of the current source object.",
+            "type": "string",
+            "minLength": 1,
+            "examples": [
+                "'Invoice 1'",
+                "QTY * PRICE",
+                "true",
+                "`X-${UPC.substring(0, 5)}`",
+                "LINE_ITEMS.find(i => i.QTY == 0)"
+            ]
+        },
+        "StrictMappingObject": {
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/ValueMapping"
+                },
+                {
+                    "$ref": "#/definitions/ObjectFieldsExplicitMapping"
+                },
+                {
+                    "$ref": "#/definitions/ContextSwitch"
+                },
+                {
+                    "$ref": "#/definitions/TupleMapping"
+                },
+                {
+                    "$ref": "#/definitions/ArrayIterator"
+                }
+            ]
+        },
+        "ValueMapping": {
+            "title": "Value Mapping",
+            "description": "Maps the destination value. No wrapping object will be created. This can be useful for root element, arrays, or context switching, when `\"map\": {}` wrapper is required, but a simple type output is needed.",
+            "type": "object",
+            "minProperties": 1,
+            "properties": {
+                "*": {
+                    "$ref": "#/definitions/AnyMapping"
+                }
+            },
+            "required": [
+                "*"
+            ],
+            "additionalProperties": false
+        },
+        "ObjectFieldsMapping": {
+            "title": "Object Fields Mapping",
+            "description": "Maps the fields of a destination object. Each key-value pair in the mapping represents a field and its mapping expression.",
+            "type": "object",
+            "minProperties": 1,
+            "patternProperties": {
+                "^(?!(\\*)|(map)|(forEach)|(from)).+$": {
+                    "$ref": "#/definitions/AnyMapping"
+                }
+            },
+            "additionalProperties": false,
+            "examples": [
+                {
+                    "code": "`X-${UPC}`",
+                    "qty": "QTY",
+                    "price": "PRICE",
+                    "amount": "QTY * PRICE"
+                }
+            ]
+        },
+        "ObjectFieldsExplicitMapping": {
+            "title": "Object Explicit Mapping",
+            "description": "Maps a source object to a destination object. Requires a 'map' property containing a mapping expression for the source object.",
+            "type": "object",
+            "properties": {
+                "map": {
+                    "$ref": "#/definitions/ObjectFieldsMapping"
+                }
+            },
+            "required": [
+                "map"
+            ],
+            "additionalProperties": false
+        },
+        "TupleMapping": {
+            "title": "Tuple Mapping",
+            "description": "Maps elements of a source array to a destination array. Each element in the mapping array is a mapping expression for corresponding elements in the source array.",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/AnyMapping"
+            },
+            "examples": [
+                [
+                    {
+                        "foo": "'bar'"
+                    },
+                    "AMOUNT"
+                ]
+            ]
+        },
+        "ArrayIterator": {
+            "title": "Array Iterator",
+            "description": "Maps a source array to a destination array. Requires 'forEach' property to specify the selector of source values, and 'map' property containing a mapping expression for each element.",
+            "type": "object",
+            "properties": {
+                "forEach": {
+                    "title": "Source Selector",
+                    "description": "A JavaScript expression that selects values from the source array which should be used as the primary source for destination values mapping.",
+                    "$ref": "#/definitions/JsExpression"
+                },
+                "map": {
+                    "$ref": "#/definitions/AnyMapping"
+                }
+            },
+            "required": [
+                "forEach",
+                "map"
+            ],
+            "additionalProperties": false,
+            "examples": [
+                {
+                    "forEach": "LINE_ITEMS",
+                    "map": {
+                        "code": "`X-${UPC}`",
+                        "qty": "QTY",
+                        "price": "PRICE",
+                        "amount": "QTY * PRICE"
+                    }
+                }
+            ]
+        },
+        "ContextSwitch": {
+            "title": "Context Switch",
+            "description": "Switch context of the current source object. Source object values can be referenced in map directly.",
+            "type": "object",
+            "properties": {
+                "from": {
+                    "title": "Source Selector",
+                    "description": "A JavaScript expression that selects the source object/value which should be used as the primary source for destination mapping.",
+                    "$ref": "#/definitions/JsExpression"
+                },
+                "map": {
+                    "$ref": "#/definitions/AnyMapping"
+                }
+            },
+            "required": [
+                "from",
+                "map"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

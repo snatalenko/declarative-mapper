@@ -64,15 +64,11 @@ describe('mappingSchema', () => {
 		];
 
 		v.validate(map, schema, { throwError: true });
-
-		map = 'foo';
-
-		v.validate(map, schema, { throwError: true });
 	});
 
 	it('shows errors in incorrect mapping', () => {
 
-		const NOT_ANY_OF_MSG = 'is not any of "Constant or variable","Object implicit mapping","Object explicit mapping","Object in context mapping","Array mapping","Array elements mapping"';
+		const NOT_ANY_OF_MSG = 'is not exactly one from <#/definitions/StrictMappingObject>,<#/definitions/ObjectFieldsMapping>';
 
 		let map = {};
 
