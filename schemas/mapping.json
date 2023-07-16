@@ -11,28 +11,6 @@
             "$ref": "#/definitions/ObjectFieldsMapping"
         }
     ],
-    "examples": [
-        {
-            "title": "'Invoice 1'",
-            "items": {
-                "forEach": "LINE_ITEMS",
-                "map": {
-                    "code": "`X-${UPC}`",
-                    "qty": "QTY",
-                    "price": "PRICE",
-                    "amount": "QTY * PRICE"
-                }
-            },
-            "billTo": {
-                "from": "BUYER",
-                "map": {
-                    "name": "COMPANY_NAME",
-                    "address": "`${STREET}, ${CITY} ${STATE}, ${ZIP}`"
-                }
-            },
-            "total": "LINE_ITEMS.reduce((sum, i) => sum + (i.QTY * i.PRICE), 0)"
-        }
-    ],
     "definitions": {
         "AnyMapping": {
             "oneOf": [
@@ -56,10 +34,10 @@
             "type": "string",
             "minLength": 1,
             "examples": [
-                "'Invoice 1'",
+                "`Invoice ${ID}`",
                 "QTY * PRICE",
                 "true",
-                "`X-${UPC.substring(0, 5)}`",
+                "UPC.substring(0, 5)",
                 "LINE_ITEMS.find(i => i.QTY == 0)"
             ]
         },
@@ -110,7 +88,7 @@
             "additionalProperties": false,
             "examples": [
                 {
-                    "code": "`X-${UPC}`",
+                    "code": "UPC.substring(0, 5)",
                     "qty": "QTY",
                     "price": "PRICE",
                     "amount": "QTY * PRICE"
@@ -170,7 +148,7 @@
                 {
                     "forEach": "LINE_ITEMS",
                     "map": {
-                        "code": "`X-${UPC}`",
+                        "code": "UPC.substring(0, 5)",
                         "qty": "QTY",
                         "price": "PRICE",
                         "amount": "QTY * PRICE"
