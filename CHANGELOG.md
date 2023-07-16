@@ -1,3 +1,16 @@
+## [1.6.1](https://github.com/snatalenko/declarative-mapper/compare/v1.6.0...v1.6.1) (2023-07-16)
+
+
+### Fixes
+
+* Vulnerabilities in dev dependencies ([6e77342](https://github.com/snatalenko/declarative-mapper/commit/6e77342ecc8672fbc145769186bbdc4401e70635))
+* Files placement in Dist folder ([c1c4b55](https://github.com/snatalenko/declarative-mapper/commit/c1c4b5501a215502875e4d3c933dc5d759ea76f7))
+
+### Build System
+
+* Add missing conventional-changelog-cli dependency ([6fcfdf4](https://github.com/snatalenko/declarative-mapper/commit/6fcfdf4572140999d447e400dc5c5fd269ec04a9))
+
+
 # [1.6.0](https://github.com/snatalenko/declarative-mapper/compare/v1.5.1...v1.6.0) (2023-06-11)
 
 
