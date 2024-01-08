@@ -1,3 +1,15 @@
+## [1.6.2](https://github.com/snatalenko/declarative-mapper/compare/v1.6.1...v1.6.2) (2024-01-08)
+
+
+### Fixes
+
+* Support for safe global objects and functions ([4b219a0](https://github.com/snatalenko/declarative-mapper/commit/4b219a06f29bd124cbcb0023008d8520ad70599a))
+
+### Changes
+
+* Update dependencies ([43c35df](https://github.com/snatalenko/declarative-mapper/commit/43c35dfbd5f032a40d373709ebb570c39510f379))
+
+
 ## [1.6.1](https://github.com/snatalenko/declarative-mapper/compare/v1.6.0...v1.6.1) (2023-07-16)
 
 
