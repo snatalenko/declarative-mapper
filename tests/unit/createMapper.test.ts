@@ -278,6 +278,21 @@ with ($createGlobalContext($input)) {
 		expect(() => createMapper({ map: '' })).to.throw('Property "map" is empty in mapping "{"map":""}"');
 	});
 
+	it('works with global objects', () => {
+
+		const mapper = createMapper({
+			d: 'new Date().toISOString()',
+			m: 'Math.round(1.1)',
+			i: 'Infinity'
+		});
+
+		const r = mapper({});
+
+		expect(r).to.have.property('d').that.is.not.empty;
+		expect(r).to.have.property('m').that.eqls(1);
+		expect(r).to.have.property('i').that.eqls(Infinity);
+	});
+
 	it('works fast', () => {
 
 		const mapper = createMapper({
