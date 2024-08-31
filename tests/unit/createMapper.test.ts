@@ -171,6 +171,21 @@ describe('createMapper', () => {
 		]);
 	});
 
+	it('maps properties with non-js-compatible characters', () => {
+
+		const result = createMapper({
+			'foo.bar': '"baz"',
+			'`x': '1',
+			'1\'\'': 'false'
+		})({});
+
+		expect(result).to.eql({
+			'foo.bar': 'baz',
+			'`x': 1,
+			'1\'\'': false
+		});
+	});
+
 	it('logs script body as a trace output to logger', () => {
 
 		const log: string[] = [];
@@ -192,7 +207,7 @@ with ($createGlobalContext($input)) {
   $result =
     (() => {
       return {
-        foo: true,
+        'foo': true,
       };
     })()
 }`);

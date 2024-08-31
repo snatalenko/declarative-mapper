@@ -18,11 +18,13 @@ function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
 		yield `${prefix}  return {`;
 
 	for (const [fieldName, mappingInstruction] of Object.entries(map)) {
+		const quotedFieldName = `'${fieldName.replace(/'/g, '\\\'')}'`;
+
 		if (typeof mappingInstruction === 'string') {
-			yield `${prefix}    ${fieldName}: ${mappingInstruction || 'null'},`
+			yield `${prefix}    ${quotedFieldName}: ${mappingInstruction || 'null'},`
 		}
 		else {
-			yield `${prefix}    ${fieldName}: `;
+			yield `${prefix}    ${quotedFieldName}: `;
 			yield* mappingToJs(mappingInstruction, level + 2);
 			yield ','
 		}
