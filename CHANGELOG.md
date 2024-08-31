@@ -1,3 +1,15 @@
+## [1.6.3](https://github.com/snatalenko/declarative-mapper/compare/v1.6.2...v1.6.3) (2024-08-31)
+
+
+### Fixes
+
+* Inability to map field names incompatible with JS variable name syntax ([52555ab](https://github.com/snatalenko/declarative-mapper/commit/52555ab83fa6fa7718b20ecc37ce53fc66a34bf8))
+
+### Changes
+
+* Upgrade dependencies to fix audit vulnerabilities ([27487f6](https://github.com/snatalenko/declarative-mapper/commit/27487f64564637a354747aaa85203abdbcf0ff97))
+
+
 ## [1.6.2](https://github.com/snatalenko/declarative-mapper/compare/v1.6.1...v1.6.2) (2024-01-08)
 
 
