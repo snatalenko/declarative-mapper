@@ -53,92 +53,152 @@ describe('createMapper', () => {
 		});
 	});
 
-	it('maps loops using `forEach` directive', () => {
+	describe('forEach', () => {
 
-		const input = {
-			arr: [{
-				id: 1,
-				qty: 100
-			}, {
-				id: 2,
-				qty: 200
-			}]
-		};
-		const mapper = createMapper({
-			forEach: 'arr',
-			map: {
-				description: "'#' + id + ' - ' + qty + ' items'"
-			}
-		});
+		it('maps loops using `forEach` directive', () => {
 
-		const result = mapper(input);
-
-		expect(result).to.eql([
-			{ description: '#1 - 100 items' },
-			{ description: '#2 - 200 items' }
-		]);
-	});
-
-	it('safely handles nonexistent properties in `forEach` directive', () => {
-
-		const input = {};
-
-		const mapper = createMapper({
-			forEach: 'arr',
-			map: {
-				description: "'#' + id + ' - ' + qty + ' items'"
-			}
-		});
-
-		const result = mapper(input);
-
-		expect(result).to.eql(undefined);
-	});
-
-	it('allows to switch mapping context using `from` directive', () => {
-
-		const input = {
-			container: {
-				nested: {
-					bar: 'baz',
-					bar2: 'baz2'
+			const input = {
+				arr: [{
+					id: 1,
+					qty: 100
+				}, {
+					id: 2,
+					qty: 200
+				}]
+			};
+			const mapper = createMapper({
+				forEach: 'arr',
+				map: {
+					description: "'#' + id + ' - ' + qty + ' items'"
 				}
-			}
-		};
+			});
 
-		const mapper = createMapper({
-			from: 'container.nested',
-			map: {
-				foo: 'bar',
-				foo2: '$context.bar2'
-			}
+			const result = mapper(input);
+
+			expect(result).to.eql([
+				{ description: '#1 - 100 items' },
+				{ description: '#2 - 200 items' }
+			]);
 		});
 
-		const result = mapper(input);
+		it('safely handles nonexistent properties in `forEach` directive', () => {
 
-		expect(result).to.eql({
-			foo: 'baz',
-			foo2: 'baz2'
+			const input = {};
+
+			const mapper = createMapper({
+				forEach: 'arr',
+				map: {
+					description: "'#' + id + ' - ' + qty + ' items'"
+				}
+			});
+
+			const result = mapper(input);
+
+			expect(result).to.eql(undefined);
+		});
+
+		it('throws errors on incorrectly formatted instructions', () => {
+
+			expect(() => createMapper({ forEach: 'test', map: '' })).to.throw("Property \"map\" is empty in mapping \"{\"forEach\":\"test\",\"map\":\"\"}\"");
+			expect(() => createMapper({ forEach: '', map: {} })).to.throw('Property \"forEach\" is empty in mapping \"{\"forEach\":\"\",\"map\":{}}\"');
+		});
+
+		it('does not treat mapping as a `forEach` directive if it contains other properties', () => {
+
+			const mapper = createMapper({
+				forEach: 'test',
+				map: {
+					v: 'foo'
+				},
+				other: '"value"'
+			});
+
+			const result = mapper({ test: [{ foo: 'bar' }] });
+
+			expect(result).to.eql({
+				forEach: [{ foo: 'bar' }],
+				map: {
+					v: undefined
+				},
+				other: 'value'
+			});
 		});
 	});
 
-	it('handles references to non-existing properties in `from` directive', () => {
+	describe('from', () => {
 
-		const input = {
-			container: {}
-		};
+		it('allows to switch mapping context using `from` directive', () => {
 
-		const mapper = createMapper({
-			from: 'container.nested',
-			map: {
-				foo: 'bar'
-			}
+			const input = {
+				container: {
+					nested: {
+						bar: 'baz',
+						bar2: 'baz2'
+					}
+				}
+			};
+
+			const mapper = createMapper({
+				from: 'container.nested',
+				map: {
+					foo: 'bar',
+					foo2: '$context.bar2'
+				}
+			});
+
+			const result = mapper(input);
+
+			expect(result).to.eql({
+				foo: 'baz',
+				foo2: 'baz2'
+			});
 		});
 
-		const result = mapper(input);
+		it('handles references to non-existing properties in `from` directive', () => {
 
-		expect(result).to.eql({
-			foo: undefined
+			const input = {
+				container: {}
+			};
+
+			const mapper = createMapper({
+				from: 'container.nested',
+				map: {
+					foo: 'bar'
+				}
+			});
+
+			const result = mapper(input);
+
+			expect(result).to.eql({
+				foo: undefined
+			});
+		});
+
+		it('throws errors on incorrectly formatted instructions', () => {
+
+			expect(() => createMapper({ from: 'test', map: '' })).to.throw("Property \"map\" is empty in mapping \"{\"from\":\"test\",\"map\":\"\"}\"");
+			expect(() => createMapper({ from: '', map: {} })).to.throw('Property \"from\" is empty in mapping \"{\"from\":\"\",\"map\":{}}\"');
+		});
+
+		it('does not treat mapping as a `from` directive if it contains other properties', () => {
+
+			const mapper = createMapper({
+				from: 'test',
+				map: {
+					v: 'foo'
+				},
+				other: '"value"'
+			});
+
+			const result = mapper({ test: { foo: 'bar' } });
+
+			expect(result).to.eql({
+				from: { foo: 'bar' },
+				map: {
+					v: undefined
+				},
+				other: 'value'
+			});
 		});
 	});
 
@@ -257,31 +317,34 @@ with ($createGlobalContext($input)) {
 		});
 	});
 
-	it('maps result from simple type', () => {
+	describe('*', () => {
 
-		const mapper = createMapper({
-			map: {
-				'*': 'foo'
-			}
+		it('maps result from simple type', () => {
+
+			const mapper = createMapper({
+				map: {
+					'*': 'foo'
+				}
+			});
+
+			const result = mapper({ foo: 'bar' });
+
+			expect(result).to.eq('bar');
 		});
 
-		const result = mapper({ foo: 'bar' });
+		it('maps array elements from simple types', () => {
 
-		expect(result).to.eq('bar');
-	});
+			const mapper = createMapper({
+				forEach: 'arr',
+				map: {
+					'*': '$record * 2'
+				}
+			});
 
-	it('maps array elements from simple types', () => {
+			const result = mapper({ arr: [1, 2, 3] });
 
-		const mapper = createMapper({
-			forEach: 'arr',
-			map: {
-				'*': '$record * 2'
-			}
+			expect(result).to.eql([2, 4, 6]);
 		});
-
-		const result = mapper({ arr: [1, 2, 3] });
-
-		expect(result).to.eql([2, 4, 6]);
 	});
 
 	it('throws error if input field names conflict with extension names', () => {
@@ -297,14 +360,6 @@ with ($createGlobalContext($input)) {
 	});
 
 	it('throws errors on incorrectly formatted instructions', () => {
-
-		expect(() => createMapper({ from: 'test' })).to.throw('Property "map" is empty in mapping "{"from":"test"}"');
-
-		expect(() => createMapper({ from: '' })).to.throw('Property "from" is empty in mapping "{"from":""}"');
-
-		expect(() => createMapper({ forEach: 'test' })).to.throw('Property "map" is empty in mapping "{"forEach":"test"}"');
-
-		expect(() => createMapper({ forEach: '' })).to.throw('Property "forEach" is empty in mapping "{"forEach":""}"');
 
 		expect(() => createMapper({ map: '' })).to.throw('Property "map" is empty in mapping "{"map":""}"');
 	});

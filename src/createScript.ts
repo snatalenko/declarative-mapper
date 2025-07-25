@@ -40,7 +40,9 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 
 	const prefix = '  '.repeat(level);
 
-	if (!Array.isArray(mapping) && 'forEach' in mapping) {
+	const mappingKeys = Object.keys(mapping);
+
+	if (mappingKeys.length === 2 && mappingKeys.includes('forEach') && mappingKeys.includes('map')) {
 		const { forEach, map } = mapping as TArrayMapping;
 		if (!forEach)
 			throw new TypeError(`Property "forEach" is empty in mapping "${JSON.stringify(mapping)}"`);
@@ -53,7 +55,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 		yield `${prefix}    }`;
 		yield `${prefix}  })`;
 	}
-	else if ('from' in mapping) {
+	else if (mappingKeys.length === 2 && mappingKeys.includes('from') && mappingKeys.includes('map')) {
 		const { from, map } = mapping as TObjectInContextMapping;
 		if (!from)
 			throw new TypeError(`Property "from" is empty in mapping "${JSON.stringify(mapping)}"`);
@@ -67,7 +69,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 		yield `${prefix}    }`;
 		yield `${prefix}  })()`;
 	}
-	else if (!Array.isArray(mapping) && 'map' in mapping && Object.keys(mapping).length === 1) {
+	else if (mappingKeys.length === 1 && mappingKeys.includes('map')) {
 		const { map } = mapping as TObjectMapping;
 		if (!map)
 			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
