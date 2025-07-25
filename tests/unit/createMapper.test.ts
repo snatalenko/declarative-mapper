@@ -79,6 +79,22 @@ describe('createMapper', () => {
 		]);
 	});
 
+	it('safely handles nonexistent properties in `forEach` directive', () => {
+
+		const input = {};
+
+		const mapper = createMapper({
+			forEach: 'arr',
+			map: {
+				description: "'#' + id + ' - ' + qty + ' items'"
+			}
+		});
+
+		const result = mapper(input);
+
+		expect(result).to.eql(undefined);
+	});
+
 	it('allows to switch mapping context using `from` directive', () => {
 
 		const input = {
