@@ -1,3 +1,16 @@
+## [1.6.4](https://github.com/snatalenko/declarative-mapper/compare/v1.6.3...v1.6.4) (2025-07-25)
+
+
+### Fixes
+
+* Vulnerabilities in dev dependencies ([6c05044](https://github.com/snatalenko/declarative-mapper/commit/6c0504484d72a6ab0a6db80b2c9a199712ae488f))
+* Mapping failure on undefined properties in `forEach` directive ([9994c5c](https://github.com/snatalenko/declarative-mapper/commit/9994c5c72109be36710fc42a996cc92618446070)), closes [#11](https://github.com/snatalenko/declarative-mapper/issues/11)
+
+### Changes
+
+* Stricter `from` and `forEach` instruction detection to avoid false positives ([e5ed806](https://github.com/snatalenko/declarative-mapper/commit/e5ed8064bb8a36741a0a7b077c7437b10963d27c))
+
+
 ## [1.6.3](https://github.com/snatalenko/declarative-mapper/compare/v1.6.2...v1.6.3) (2024-08-31)
 
 
