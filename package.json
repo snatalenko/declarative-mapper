@@ -20,13 +20,13 @@
     "cleanup": "rm -rf ./dist ./types ./coverage",
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
-    "changelog": "conventional-changelog -n ./scripts/changelog -i CHANGELOG.md -s",
+    "changelog": "conventional-changelog -n ./scripts/changelog/index.cjs -i CHANGELOG.md -s",
     "build": "npm run build:esm && npm run build:cjs",
     "build:cjs": "tsc -p ./tsconfig.cjs.json && cp ./scripts/etc/cjs-package.json ./dist/cjs/package.json",
     "build:esm": "tsc -p ./tsconfig.esm.json",
     "prepack": "npm t && npm run build",
     "preversion": "npm audit --audit-level=low && npm t",
-    "version": "npm run changelog && git add CHANGELOG.md",
+    "version": "./scripts/cleanup_obsolete_tags.sh v$npm_package_version && npm run changelog && git add CHANGELOG.md",
     "lint": "eslint"
   },
   "repository": {
