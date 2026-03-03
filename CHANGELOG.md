@@ -1,3 +1,11 @@
+# [1.7.0-3](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-2...v1.7.0-3) (2026-03-03)
+
+
+### Documentation
+
+* Fix tests workflow badge ([e02d95f](https://github.com/snatalenko/declarative-mapper/commit/e02d95f1e6b05b039a1f1555d150ce4963d7e511))
+
+
 # [1.7.0-2](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-1...v1.7.0-2) (2026-03-03)
 
 
