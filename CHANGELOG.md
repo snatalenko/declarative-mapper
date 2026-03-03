@@ -1,3 +1,11 @@
+## [1.7.1](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0...v1.7.1) (2026-03-03)
+
+
+### Documentation
+
+* Update readme, keywords, and description ([cafcf93](https://github.com/snatalenko/declarative-mapper/commit/cafcf930a0a2b2a13d6a078239a6519c55ffe472))
+
+
 # [1.7.0](https://github.com/snatalenko/declarative-mapper/compare/v1.6.4...v1.7.0) (2026-03-03)
 
 

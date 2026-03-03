@@ -1,6 +1,6 @@
 {
   "name": "declarative-mapper",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Declarative JSON and object mapper for Node.js/TypeScript: transform data with mapping templates, schema-based helpers, and safe VM execution.",
   "keywords": [
     "json-mapper",
