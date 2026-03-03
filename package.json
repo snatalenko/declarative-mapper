@@ -22,7 +22,7 @@
     "url": "git+ssh://git@github.com/snatalenko/declarative-mapper.git"
   },
   "author": "@snatalenko",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/snatalenko/declarative-mapper/issues"
   },
