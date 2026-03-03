@@ -1,10 +1,21 @@
 {
   "name": "declarative-mapper",
   "version": "1.7.0",
-  "description": "Declarative object mapper for NodeJS",
+  "description": "Declarative JSON and object mapper for Node.js/TypeScript: transform data with mapping templates, schema-based helpers, and safe VM execution.",
   "keywords": [
-    "declarative",
-    "mapping"
+    "json-mapper",
+    "object-mapper",
+    "data-mapper",
+    "declarative-mapping",
+    "data-transformation",
+    "object-transformation",
+    "schema-mapping",
+    "json-schema-mapping",
+    "json-to-json",
+    "config-driven",
+    "etl",
+    "nodejs",
+    "typescript"
   ],
   "type": "module",
   "main": "dist/cjs/index.js",

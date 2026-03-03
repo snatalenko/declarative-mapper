@@ -2,10 +2,25 @@ Declarative Mapper for Node.js
 =============================
 
 [![Version](https://img.shields.io/npm/v/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
-[![Coverage](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
+[![Coverage](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master&v=1.7.1)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
 [![Downloads](https://img.shields.io/npm/dm/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
-[![License](https://img.shields.io/github/license/snatalenko/declarative-mapper.svg)](https://github.com/snatalenko/declarative-mapper)
+[![License](https://img.shields.io/github/license/snatalenko/declarative-mapper.svg?v=1.7.1)](https://github.com/snatalenko/declarative-mapper)
 [![Tests/Audit](https://github.com/snatalenko/declarative-mapper/actions/workflows/ci.yml/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
+
+## Table of Contents
+
+- [Reasoning](#reasoning)
+  - [Quick Start Example](#quick-start-example)
+- [Mapping Instructions](#mapping-instructions)
+  - [Runtime Variables Quick Reference](#runtime-variables-quick-reference)
+  - [Objects](#objects)
+  - [Arrays](#arrays)
+  - [String\[\] from Object\[\]](#string-from-object)
+  - [String\[\] from String\[\]](#string-from-string)
+  - [Tuple Arrays](#tuple-arrays)
+  - [Runtime Variables ($input, $record, $index, $collection)](#runtime-variables-input-record-index-collection)
+  - [Dynamic Output Keys](#dynamic-output-keys)
+  - [Complex Mapping Example](#complex-mapping-example)
 
 ## Reasoning
 
@@ -21,7 +36,7 @@ That is where Declarative Mapper came in:
 - **Lightweight** - no dependencies
 
 
-A simple example:
+### Quick Start Example
 
 ```ts
 import { createMapper } from 'declarative-mapper';
@@ -90,6 +105,15 @@ The right side is either a string with a valid JS expression or an object with m
 }
 ```
 
+### Runtime Variables Quick Reference
+
+| Variable | Description | Available in |
+| --- | --- | --- |
+| `$input` | Entire source document passed to the mapper. | All mapping contexts |
+| `$record` | Current element in a `forEach` iteration. | `forEach` → `map` |
+| `$index` | Current element index in a `forEach` iteration. | `forEach` → `map` |
+| `$collection` | Entire source array selected by `forEach`. | `forEach` → `map` |
+
 ### Objects
 
 Mapping of an object with inner properties:
@@ -150,7 +174,10 @@ Result:
   }]
 ```
 
-In this mapping, the execution context shifts to each input object, so inner properties can be referenced directly as `arrayInnerProperty` instead of `inputArray[index].arrayInnerProperty`. More on that in [Context Switching](#context-switching).
+In this mapping, the execution context shifts to each input object, so inner properties can be referenced directly as `arrayInnerProperty` instead of `inputArray[index].arrayInnerProperty`.
+
+Inside `forEach` mappings, `$record`, `$index`, `$collection`, and `$input` are also available.
+More on that in [Runtime Variables](#context-switching).
 
 
 #### String[] from Object[]
@@ -200,7 +227,7 @@ Result:
 [2, 4, 6]
 ```
 
-### Array with predefined set of elements
+### Tuple Arrays
 
 If the array should have a predefined set of elements, each element can be mapped by index:
 
@@ -255,12 +282,27 @@ Or up in the source document:
   }
 ```
 
-These special variables are useful for context switching:
+Inside `from` mappings, you can still reference root-level fields through `$input`.
+
+Runtime variables:
 
 - `$record` - current element of the array being iterated with `forEach`
 - `$index` - index of the current array element
 - `$collection` - entire collection of the elements being iterated
 - `$input` - entire document passed as mapping input
+
+Combined example (`forEach` + root reference):
+
+```json
+{
+  "forEach": "LINE_ITEMS",
+  "map": {
+    "lineNo": "$index + 1",
+    "sourceId": "$input.id",
+    "raw": "$record"
+  }
+}
+```
 
 ### Dynamic Output Keys
 
