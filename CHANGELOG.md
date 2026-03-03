@@ -1,3 +1,11 @@
+# [1.7.0-2](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-1...v1.7.0-2) (2026-03-03)
+
+
+### Refactoring
+
+* Remove unused default parameters from inner functions ([2ce8aa4](https://github.com/snatalenko/declarative-mapper/commit/2ce8aa4038c9bec7ee2281152a9d4199491f8076))
+
+
 # [1.7.0-1](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-0...v1.7.0-1) (2026-03-03)
 
 
