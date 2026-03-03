@@ -24,13 +24,13 @@ function* propertiesMapToJs(map: PropertiesMap, level: number = 0) {
 		yield `${prefix}  return {`;
 
 	for (const [fieldName, mappingInstruction] of Object.entries(map)) {
-		const quotedFieldName = `'${fieldName.replace(/'/g, '\\\'')}'`;
+		const quotedFieldName = fieldName.replace(/`/g, '\\`');
 
 		if (typeof mappingInstruction === 'string') {
-			yield `${prefix}    ${quotedFieldName}: ${mappingInstruction || 'null'},`;
+			yield `${prefix}    [\`${quotedFieldName}\`]: ${mappingInstruction || 'null'},`;
 		}
 		else {
-			yield `${prefix}    ${quotedFieldName}: `;
+			yield `${prefix}    [\`${quotedFieldName}\`]: `;
 			// eslint-disable-next-line no-use-before-define
 			yield* mappingToJs(mappingInstruction, level + 2);
 			yield ',';

@@ -53,6 +53,40 @@ describe('createMapper', () => {
 		});
 	});
 
+	it('maps dynamic property names using template expressions', () => {
+
+		const mapper = createMapper({
+			map: {
+				'${prefix}_${id}': 'value'
+			}
+		});
+
+		const result = mapper({
+			prefix: 'item',
+			id: 7,
+			value: 'abc'
+		});
+
+		expect(result).to.eql({
+			item_7: 'abc'
+		});
+	});
+
+	it('supports escaping template interpolation in property names', () => {
+
+		const mapper = createMapper({
+			map: {
+				'\\${foo}': '"bar"'
+			}
+		});
+
+		const result = mapper({ foo: 'ignored' });
+
+		expect(result).to.eql({
+			'${foo}': 'bar'
+		});
+	});
+
 	describe('forEach', () => {
 
 		it('maps loops using `forEach` directive', () => {
@@ -78,6 +112,28 @@ describe('createMapper', () => {
 			expect(result).to.eql([
 				{ description: '#1 - 100 items' },
 				{ description: '#2 - 200 items' }
+			]);
+		});
+
+		it('maps dynamic property names in `forEach` context', () => {
+
+			const mapper = createMapper({
+				forEach: 'arr',
+				map: {
+					'${$index}_${code}': 'qty'
+				}
+			});
+
+			const result = mapper({
+				arr: [
+					{ code: 'A', qty: 10 },
+					{ code: 'B', qty: 20 }
+				]
+			});
+
+			expect(result).to.eql([
+				{ '0_A': 10 },
+				{ '1_B': 20 }
 			]);
 		});
 
@@ -151,6 +207,29 @@ describe('createMapper', () => {
 			expect(result).to.eql({
 				foo: 'baz',
 				foo2: 'baz2'
+			});
+		});
+
+		it('maps dynamic property names in `from` context', () => {
+
+			const mapper = createMapper({
+				from: 'container.nested',
+				map: {
+					'${id}': 'value'
+				}
+			});
+
+			const result = mapper({
+				container: {
+					nested: {
+						id: 'sku_1',
+						value: 100
+					}
+				}
+			});
+
+			expect(result).to.eql({
+				sku_1: 100
 			});
 		});
 
@@ -283,7 +362,7 @@ with ($createGlobalContext($input)) {
   $result =
     (() => {
       return {
-        'foo': true,
+        [\`foo\`]: true,
       };
     })()
 }`);

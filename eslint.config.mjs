@@ -663,7 +663,8 @@ export default defineConfig([
 			'class-methods-use-this': 'off',
 			'no-loop-func': 'off',
 			'no-return-assign': 'off',
-			'no-console': 'off'
+			'no-console': 'off',
+			'no-template-curly-in-string': 'off'
 		}
 	}
 ]);
