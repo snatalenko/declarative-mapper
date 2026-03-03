@@ -1,3 +1,11 @@
+# [1.7.0-1](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-0...v1.7.0-1) (2026-03-03)
+
+
+### Tests
+
+* Add missing tests to improve coverage ([8b3606a](https://github.com/snatalenko/declarative-mapper/commit/8b3606add20870c6256bc6e18583bb3f037d4047))
+
+
 # [1.7.0-0](https://github.com/snatalenko/declarative-mapper/compare/v1.6.4...v1.7.0-0) (2026-03-03)
 
 
