@@ -6,13 +6,24 @@
     "declarative",
     "mapping"
   ],
-  "main": "dist/index.js",
+  "type": "module",
+  "main": "dist/cjs/index.js",
   "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./types/index.d.ts"
+    }
+  },
   "scripts": {
+    "cleanup": "rm -rf ./dist ./types ./coverage",
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
     "changelog": "conventional-changelog -n ./scripts/changelog -i CHANGELOG.md -s",
-    "build": "tsc",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:cjs": "tsc -p ./tsconfig.cjs.json && cp ./scripts/etc/cjs-package.json ./dist/cjs/package.json",
+    "build:esm": "tsc -p ./tsconfig.esm.json",
     "prepack": "npm t && npm run build",
     "preversion": "npm audit --audit-level=low && npm t",
     "version": "npm run changelog && git add CHANGELOG.md"

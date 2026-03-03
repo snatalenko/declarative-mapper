@@ -2,6 +2,8 @@
     "compileOnSave": true,
     "compilerOptions": {
         "module": "CommonJS",
+        "target": "ES2018",
+        "moduleResolution": "node",
         "removeComments": false,
         "sourceMap": true,
         "alwaysStrict": false,
@@ -10,9 +12,6 @@
         "lib": [
             "ES2018"
         ],
-        "target": "ES2018",
-        "declaration": true,
-        "declarationDir": "./types",
         "strictNullChecks": true,
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
