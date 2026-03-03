@@ -9,7 +9,7 @@ Declarative Mapper for Node.js
 
 ## Table of Contents
 
-- [Reasoning](#reasoning)
+- [Overview](#overview)
   - [Quick Start Example](#quick-start-example)
 - [Mapping Instructions](#mapping-instructions)
   - [Runtime Variables Quick Reference](#runtime-variables-quick-reference)
@@ -20,9 +20,9 @@ Declarative Mapper for Node.js
   - [Tuple Arrays](#tuple-arrays)
   - [Runtime Variables ($input, $record, $index, $collection)](#runtime-variables-input-record-index-collection)
   - [Dynamic Output Keys](#dynamic-output-keys)
-  - [Complex Mapping Example](#complex-mapping-example)
+- [Complex Mapping Example](#complex-mapping-example)
 
-## Reasoning
+## Overview
 
 On several projects, I needed a library that could convert one JSON format to another (for example, an invoice from one system into another). It had to support **declarative mapping** instructions so users could configure mappings from a UI. It also had to be **flexible** enough for complex requirements, **secure** against JS injection, and **fast** enough to process streams with millions of records.
 
