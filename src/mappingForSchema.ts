@@ -9,6 +9,7 @@ function getObjectFields(obj: { [k: string]: JSONSchema4 }): PropertiesMap {
 		if (fieldSchema.readOnly)
 			continue;
 
+		// eslint-disable-next-line no-use-before-define
 		map[fieldName] = mappingForSchema(fieldSchema);
 	}
 	return map;

@@ -8,7 +8,7 @@ function getUniqueValues<TElement>(arr: TElement[]): TElement[] {
 		el
 	]);
 	return Array.from(new Map(kvPairs).values());
-};
+}
 
 export default function mergeSchema(dest: JSONSchema4, src: JSONSchema4): JSONSchema4 {
 	const result = { ...dest };
@@ -21,4 +21,4 @@ export default function mergeSchema(dest: JSONSchema4, src: JSONSchema4): JSONSc
 			result[key] = src[key];
 	}
 	return result;
-};
+}

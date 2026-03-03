@@ -1,12 +1,11 @@
-
 import { sampleForSchema } from '../../src';
 import type { JSONSchema4 } from 'json-schema';
 import * as sampleSchema from './data/sampleSchema.json';
 import { expect } from 'chai';
 
 function clone<T>(obj: T): T {
-	return JSON.parse(JSON.stringify(obj))
-};
+	return JSON.parse(JSON.stringify(obj));
+}
 
 describe('sampleForSchema', () => {
 
@@ -15,7 +14,7 @@ describe('sampleForSchema', () => {
 		const sample = sampleForSchema(sampleSchema as JSONSchema4);
 
 		expect(sample).to.eql({
-			id: "00000000000000000000000000000000",
+			id: '00000000000000000000000000000000',
 			longText: 'texttextte',
 			shortText: 'te',
 			textWithExample: 'example 1',

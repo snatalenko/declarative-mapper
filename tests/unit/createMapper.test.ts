@@ -14,7 +14,7 @@ describe('createMapper', () => {
 
 		const mapper = createMapper({
 			map: {
-				'foo': '"bar"'
+				foo: '"bar"'
 			}
 		});
 
@@ -29,7 +29,7 @@ describe('createMapper', () => {
 
 		const mapper = createMapper({
 			map: {
-				'foo': 'a'
+				foo: 'a'
 			}
 		});
 
@@ -43,7 +43,7 @@ describe('createMapper', () => {
 	it('maps values from source document (without `map` directive)', () => {
 
 		const mapper = createMapper({
-			'foo': 'a'
+			foo: 'a'
 		});
 
 		const result = mapper({ a: 'b' });
@@ -99,8 +99,8 @@ describe('createMapper', () => {
 
 		it('throws errors on incorrectly formatted instructions', () => {
 
-			expect(() => createMapper({ forEach: 'test', map: '' })).to.throw("Property \"map\" is empty in mapping \"{\"forEach\":\"test\",\"map\":\"\"}\"");
-			expect(() => createMapper({ forEach: '', map: {} })).to.throw('Property \"forEach\" is empty in mapping \"{\"forEach\":\"\",\"map\":{}}\"');
+			expect(() => createMapper({ forEach: 'test', map: '' })).to.throw('Property "map" is empty in mapping "{"forEach":"test","map":""}"');
+			expect(() => createMapper({ forEach: '', map: {} })).to.throw('Property "forEach" is empty in mapping "{"forEach":"","map":{}}"');
 		});
 
 		it('does not treat mapping as a `forEach` directive if it contains other properties', () => {
@@ -176,8 +176,8 @@ describe('createMapper', () => {
 
 		it('throws errors on incorrectly formatted instructions', () => {
 
-			expect(() => createMapper({ from: 'test', map: '' })).to.throw("Property \"map\" is empty in mapping \"{\"from\":\"test\",\"map\":\"\"}\"");
-			expect(() => createMapper({ from: '', map: {} })).to.throw('Property \"from\" is empty in mapping \"{\"from\":\"\",\"map\":{}}\"');
+			expect(() => createMapper({ from: 'test', map: '' })).to.throw('Property "map" is empty in mapping "{"from":"test","map":""}"');
+			expect(() => createMapper({ from: '', map: {} })).to.throw('Property "from" is empty in mapping "{"from":"","map":{}}"');
 		});
 
 		it('does not treat mapping as a `from` directive if it contains other properties', () => {
@@ -209,8 +209,8 @@ describe('createMapper', () => {
 		};
 
 		const map1 = {
-			'0': 'foo',
-			'1': '"baz"'
+			0: 'foo',
+			1: '"baz"'
 		};
 
 		const result1 = createMapper(map1)(input);
@@ -267,7 +267,7 @@ describe('createMapper', () => {
 		const log: string[] = [];
 
 		createMapper({
-			map: { foo: 'true' },
+			map: { foo: 'true' }
 		}, {
 			logger: {
 				trace(msg) {

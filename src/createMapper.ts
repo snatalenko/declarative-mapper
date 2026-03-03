@@ -8,13 +8,14 @@ interface ILogger {
 }
 
 type TMappingScriptEnvironment<TSource, TResult> = {
+
 	/** Main input source */
 	$input?: TSource;
 
 	/** Placeholder for mapping output */
 	$result?: TResult;
 
-	/** 
+	/**
 	 * Method for top level context creation.
 	 * Resulting object catches all variable requests
 	 * and returns `undefined` instead of ReferenceError
@@ -68,4 +69,4 @@ export default function createMapper<TSource extends object, TResult>(map: RootM
 
 		return context.$result;
 	};
-};
+}

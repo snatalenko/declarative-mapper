@@ -27,12 +27,13 @@ function* propertiesMapToJs(map: PropertiesMap, level: number = 0) {
 		const quotedFieldName = `'${fieldName.replace(/'/g, '\\\'')}'`;
 
 		if (typeof mappingInstruction === 'string') {
-			yield `${prefix}    ${quotedFieldName}: ${mappingInstruction || 'null'},`
+			yield `${prefix}    ${quotedFieldName}: ${mappingInstruction || 'null'},`;
 		}
 		else {
 			yield `${prefix}    ${quotedFieldName}: `;
+			// eslint-disable-next-line no-use-before-define
 			yield* mappingToJs(mappingInstruction, level + 2);
-			yield ','
+			yield ',';
 		}
 	}
 
@@ -55,8 +56,8 @@ function* mappingToJs(mapping: RootMapping, level: number = 0) {
 		if (!map)
 			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
 
-		yield `${prefix}  ${forEach}?.map(($record, $index, $collection) => {`
-		yield `${prefix}    with ($record) {`
+		yield `${prefix}  ${forEach}?.map(($record, $index, $collection) => {`;
+		yield `${prefix}    with ($record) {`;
 		yield* propertiesMapToJs(map, level + 2);
 		yield `${prefix}    }`;
 		yield `${prefix}  })`;
@@ -70,7 +71,7 @@ function* mappingToJs(mapping: RootMapping, level: number = 0) {
 
 		yield `${prefix}  (() => {`;
 		yield `${prefix}    var $context = ${from} ?? {};`;
-		yield `${prefix}    with ($context) {`
+		yield `${prefix}    with ($context) {`;
 		yield* propertiesMapToJs(map, level + 2);
 		yield `${prefix}    }`;
 		yield `${prefix}  })()`;
@@ -95,7 +96,7 @@ function* mappingToJs(mapping: RootMapping, level: number = 0) {
 
 /**
  * Transform declarative map to JS code
- * 
+ *
  * @param map Instructions for object mapping
  */
 export default function createScript(map: RootMapping) {

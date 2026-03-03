@@ -7,7 +7,7 @@ describe('mappingSchema', () => {
 	let v: Validator;
 	beforeAll(() => {
 		v = new Validator();
-	})
+	});
 
 	it('successfully validates correct mapping', () => {
 
