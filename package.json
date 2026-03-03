@@ -21,23 +21,23 @@
     "type": "git",
     "url": "git+ssh://git@github.com/snatalenko/declarative-mapper.git"
   },
-  "author": "@stas_natalenko",
+  "author": "@snatalenko",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/snatalenko/declarative-mapper/issues"
   },
   "homepage": "https://github.com/snatalenko/declarative-mapper#readme",
   "devDependencies": {
-    "@types/chai": "^4.3.19",
-    "@types/jest": "^29.5.12",
+    "@types/chai": "^4.3.20",
+    "@types/jest": "^29.5.14",
     "@types/json-schema": "^7.0.15",
-    "@types/node": "^20.16.2",
+    "@types/node": "^20.19.35",
     "chai": "^4.5.0",
     "conventional-changelog-cli": "^3.0.0",
     "jest": "^29.7.0",
-    "jsonschema": "^1.4.1",
-    "ts-jest": "^29.2.5",
+    "jsonschema": "^1.5.0",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   }
 }
