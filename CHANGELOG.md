@@ -1,28 +1,4 @@
-# [1.7.0-3](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-2...v1.7.0-3) (2026-03-03)
-
-
-### Documentation
-
-* Fix tests workflow badge ([e02d95f](https://github.com/snatalenko/declarative-mapper/commit/e02d95f1e6b05b039a1f1555d150ce4963d7e511))
-
-
-# [1.7.0-2](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-1...v1.7.0-2) (2026-03-03)
-
-
-### Refactoring
-
-* Remove unused default parameters from inner functions ([2ce8aa4](https://github.com/snatalenko/declarative-mapper/commit/2ce8aa4038c9bec7ee2281152a9d4199491f8076))
-
-
-# [1.7.0-1](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0-0...v1.7.0-1) (2026-03-03)
-
-
-### Tests
-
-* Add missing tests to improve coverage ([8b3606a](https://github.com/snatalenko/declarative-mapper/commit/8b3606add20870c6256bc6e18583bb3f037d4047))
-
-
-# [1.7.0-0](https://github.com/snatalenko/declarative-mapper/compare/v1.6.4...v1.7.0-0) (2026-03-03)
+# [1.7.0-4](https://github.com/snatalenko/declarative-mapper/compare/v1.6.4...v1.7.0-4) (2026-03-03)
 
 
 ### Features
@@ -35,19 +11,23 @@
 
 ### Refactoring
 
+* Remove unused default parameters from inner functions ([2ce8aa4](https://github.com/snatalenko/declarative-mapper/commit/2ce8aa4038c9bec7ee2281152a9d4199491f8076))
 * Cleanup types; use imports with TS extensions ([2ed24bc](https://github.com/snatalenko/declarative-mapper/commit/2ed24bc70855313c28d086261ccaae1e74bbb412))
 
 ### Documentation
 
+* Fix tests workflow badge ([e02d95f](https://github.com/snatalenko/declarative-mapper/commit/e02d95f1e6b05b039a1f1555d150ce4963d7e511))
 * Add contributing guidelines and development setup instructions ([7361601](https://github.com/snatalenko/declarative-mapper/commit/7361601adce8bda1a0a3ccdb083c924405e15523))
 
 ### Tests
 
+* Add missing tests to improve coverage ([8b3606a](https://github.com/snatalenko/declarative-mapper/commit/8b3606add20870c6256bc6e18583bb3f037d4047))
 * Add missing tests to improve coverage ([851e673](https://github.com/snatalenko/declarative-mapper/commit/851e67314ca77b9be910bade56e3763018f85720))
 * Allow running individual tests with `npm t` ([adb76a4](https://github.com/snatalenko/declarative-mapper/commit/adb76a46b09ba6780745d78dde12598846dc6e1e))
 
 ### Build System
 
+* Re-generate changelog content on every version ([33218c6](https://github.com/snatalenko/declarative-mapper/commit/33218c6bcc394dd751df97b94a2a24cb40b59d0a))
 * Add automatic pre-release tags cleanup ([2477330](https://github.com/snatalenko/declarative-mapper/commit/2477330ba96f90dccb70c415958d89e45a49aee3))
 * Add pre-release publishing script ([7448cfc](https://github.com/snatalenko/declarative-mapper/commit/7448cfcc47f416f820db453bd4afd7c5e3436886))
 * Add eslint ([f6b5b4b](https://github.com/snatalenko/declarative-mapper/commit/f6b5b4b6d47d9a83e1225d3d4c2649b80c73b2d0))
@@ -366,5 +346,9 @@
 ### Build System
 
 * Add tests badge ([fe40f8c](https://github.com/snatalenko/declarative-mapper/commit/fe40f8ccbaf7e86a4e292b1e6a7c95cd0eb34701))
+
+
+# 1.0.0 (2020-06-23)
+
 
 
