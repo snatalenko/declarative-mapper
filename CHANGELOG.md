@@ -1,4 +1,4 @@
-# [1.7.0-4](https://github.com/snatalenko/declarative-mapper/compare/v1.6.4...v1.7.0-4) (2026-03-03)
+# [1.7.0](https://github.com/snatalenko/declarative-mapper/compare/v1.6.4...v1.7.0) (2026-03-03)
 
 
 ### Features
