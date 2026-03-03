@@ -53,6 +53,34 @@ describe('createMapper', () => {
 		});
 	});
 
+	it('maps empty field expression to null', () => {
+
+		const mapper = createMapper({
+			map: {
+				foo: ''
+			}
+		});
+
+		const result = mapper({});
+
+		expect(result).to.eql({
+			foo: null
+		});
+	});
+
+	it('maps empty root `*` expression to null', () => {
+
+		const mapper = createMapper({
+			map: {
+				'*': ''
+			}
+		});
+
+		const result = mapper({});
+
+		expect(result).to.equal(null);
+	});
+
 	it('maps dynamic property names using template expressions', () => {
 
 		const mapper = createMapper({

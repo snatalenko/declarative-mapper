@@ -79,4 +79,14 @@ describe('sampleForSchema', () => {
 			sampleForSchema(brokenSchema2 as JSONSchema4);
 		}).to.not.throw(TypeError);
 	});
+
+	it('uses maximum when exclusiveMaximum is not set', () => {
+
+		const sample = sampleForSchema({
+			type: 'number',
+			maximum: 10
+		} as JSONSchema4);
+
+		expect(sample).to.eql(10);
+	});
 });
