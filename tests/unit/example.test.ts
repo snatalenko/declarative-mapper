@@ -1,4 +1,4 @@
-import { createMapper } from '../../src';
+import { createMapper } from '../../src/index.ts';
 import { expect } from 'chai';
 
 describe('example', () => {

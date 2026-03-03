@@ -1,8 +1,7 @@
-
-export { default as createMapper } from './createMapper';
-export { default as mappingForSchema } from './mappingForSchema';
-export { default as sampleForSchema } from './sampleForSchema';
-export * from './TMapping';
+export { default as createMapper } from './createMapper.ts';
+export { default as mappingForSchema } from './mappingForSchema.ts';
+export { default as sampleForSchema } from './sampleForSchema.ts';
+export type * from './mappingTypes.ts';
 
 // @ts-ignore
 import * as schema from '../schemas/mapping.json';

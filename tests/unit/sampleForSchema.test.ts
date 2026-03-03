@@ -1,7 +1,7 @@
 
 import { sampleForSchema } from '../../src';
-import { JSONSchema4 } from 'json-schema';
-import * as sampleSchema from './data/sampleSchema.json'
+import type { JSONSchema4 } from 'json-schema';
+import * as sampleSchema from './data/sampleSchema.json';
 import { expect } from 'chai';
 
 function clone<T>(obj: T): T {

@@ -1,10 +1,10 @@
-import { TArrayMapping, TPropertiesMap, TValueMap } from "./TMapping";
-import { JSONSchema4 } from 'json-schema';
-import { default as sampleForSchema } from './sampleForSchema';
-import { default as mergeSchema } from './utils/mergeSchema';
+import type { ArrayMapping, PropertiesMap, ValueMap } from './mappingTypes.ts';
+import type { JSONSchema4 } from 'json-schema';
+import { default as sampleForSchema } from './sampleForSchema.ts';
+import { default as mergeSchema } from './utils/mergeSchema.ts';
 
-function getObjectFields(obj: { [k: string]: JSONSchema4 }): TPropertiesMap {
-	const map: TPropertiesMap = {};
+function getObjectFields(obj: { [k: string]: JSONSchema4 }): PropertiesMap {
+	const map: PropertiesMap = {};
 	for (const [fieldName, fieldSchema] of Object.entries(obj)) {
 		if (fieldSchema.readOnly)
 			continue;
@@ -17,7 +17,7 @@ function getObjectFields(obj: { [k: string]: JSONSchema4 }): TPropertiesMap {
 /**
  * Create mapping template for a given JSON schema
  */
-export default function mappingForSchema(schema: JSONSchema4): TValueMap {
+export default function mappingForSchema(schema: JSONSchema4): ValueMap {
 
 	const { title, type, properties, items, allOf, anyOf, oneOf } = schema;
 
@@ -38,7 +38,7 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 	}
 	else if (type === 'array') {
 		if (Array.isArray(items)) {
-			const map: TPropertiesMap = {};
+			const map: PropertiesMap = {};
 			items.forEach((item, index) => {
 				map[index] = mappingForSchema(item);
 			});
@@ -51,7 +51,7 @@ export default function mappingForSchema(schema: JSONSchema4): TValueMap {
 				map: typeof itemsMapping === 'object' && 'map' in itemsMapping ?
 					itemsMapping.map :
 					{ '*': itemsMapping }
-			} as TArrayMapping;
+			} as ArrayMapping;
 		}
 	}
 	else if (type === 'boolean' || type === 'integer' || type === 'null' || type === 'number' || type === 'string') {

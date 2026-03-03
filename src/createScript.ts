@@ -1,6 +1,12 @@
-import { TPropertiesMap, TRootMapping, TArrayMapping, TObjectInContextMapping, TObjectMapping } from './TMapping';
+import type {
+	PropertiesMap,
+	RootMapping,
+	ArrayMapping,
+	ObjectInContextMapping,
+	ObjectMapping
+} from './mappingTypes.ts';
 
-function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
+function* propertiesMapToJs(map: PropertiesMap, level: number = 0) {
 
 	const prefix = '  '.repeat(level);
 	const keys = Object.keys(map);
@@ -36,14 +42,14 @@ function* propertiesMapToJs(map: TPropertiesMap, level: number = 0) {
 		yield `${prefix}  };`;
 }
 
-function* mappingToJs(mapping: TRootMapping, level: number = 0) {
+function* mappingToJs(mapping: RootMapping, level: number = 0) {
 
 	const prefix = '  '.repeat(level);
 
 	const mappingKeys = Object.keys(mapping);
 
 	if (mappingKeys.length === 2 && mappingKeys.includes('forEach') && mappingKeys.includes('map')) {
-		const { forEach, map } = mapping as TArrayMapping;
+		const { forEach, map } = mapping as ArrayMapping;
 		if (!forEach)
 			throw new TypeError(`Property "forEach" is empty in mapping "${JSON.stringify(mapping)}"`);
 		if (!map)
@@ -56,7 +62,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 		yield `${prefix}  })`;
 	}
 	else if (mappingKeys.length === 2 && mappingKeys.includes('from') && mappingKeys.includes('map')) {
-		const { from, map } = mapping as TObjectInContextMapping;
+		const { from, map } = mapping as ObjectInContextMapping;
 		if (!from)
 			throw new TypeError(`Property "from" is empty in mapping "${JSON.stringify(mapping)}"`);
 		if (!map)
@@ -70,7 +76,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 		yield `${prefix}  })()`;
 	}
 	else if (mappingKeys.length === 1 && mappingKeys.includes('map')) {
-		const { map } = mapping as TObjectMapping;
+		const { map } = mapping as ObjectMapping;
 		if (!map)
 			throw new TypeError(`Property "map" is empty in mapping "${JSON.stringify(mapping)}"`);
 
@@ -79,7 +85,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
 		yield `${prefix}  })()`;
 	}
 	else {
-		const map = mapping as TPropertiesMap;
+		const map = mapping as PropertiesMap;
 
 		yield `${prefix}  (() => {`;
 		yield* propertiesMapToJs(map, level + 1);
@@ -92,7 +98,7 @@ function* mappingToJs(mapping: TRootMapping, level: number = 0) {
  * 
  * @param map Instructions for object mapping
  */
-export default function createScript(map: TRootMapping) {
+export default function createScript(map: RootMapping) {
 	return `
 with ($createGlobalContext($input)) {
   $result =

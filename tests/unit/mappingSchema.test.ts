@@ -1,4 +1,4 @@
-import { mappingSchema as schema } from '../../src';
+import { mappingSchema as schema } from '../../src/index.ts';
 import { Validator } from 'jsonschema';
 import { expect } from 'chai';
 

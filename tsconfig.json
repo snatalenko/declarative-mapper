@@ -15,7 +15,9 @@
         "declarationDir": "./types",
         "strictNullChecks": true,
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "allowImportingTsExtensions": true,
+        "rewriteRelativeImportExtensions": true
     },
     "include": [
         "src/**/*"

@@ -1,6 +1,4 @@
-'use strict';
-
-import { JSONSchema4 } from 'json-schema';
+import type { JSONSchema4 } from 'json-schema';
 
 const isObject = v => v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date);
 

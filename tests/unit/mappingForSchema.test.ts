@@ -1,9 +1,9 @@
 
-import { mappingForSchema, createMapper } from '../../src';
-import { JSONSchema4 } from 'json-schema';
+import { mappingForSchema, createMapper } from '../../src/index.ts';
+import type { JSONSchema4 } from 'json-schema';
 import * as sampleSchema from './data/sampleSchema.json'
 import { expect } from 'chai';
-import { TRootMapping, TValueMap } from '../../src/TMapping';
+import type { RootMapping } from '../../src/mappingTypes.ts';
 
 function clone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj))
@@ -70,7 +70,7 @@ describe('mappingForSchema', () => {
 		// @ts-ignore
 		mapping?.map?.stringArray?.forEach = '[{}]';
 
-		const mapper = createMapper(mapping as TRootMapping);
+		const mapper = createMapper(mapping as RootMapping);
 
 		const result = mapper({});
 
