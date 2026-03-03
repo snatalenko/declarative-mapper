@@ -6,7 +6,7 @@ import type {
 	ObjectMapping
 } from './mappingTypes.ts';
 
-function* propertiesMapToJs(map: PropertiesMap, level: number = 0) {
+function* propertiesMapToJs(map: PropertiesMap, level: number) {
 
 	const prefix = '  '.repeat(level);
 	const keys = Object.keys(map);
@@ -43,7 +43,7 @@ function* propertiesMapToJs(map: PropertiesMap, level: number = 0) {
 		yield `${prefix}  };`;
 }
 
-function* mappingToJs(mapping: RootMapping, level: number = 0) {
+function* mappingToJs(mapping: RootMapping, level: number) {
 
 	const prefix = '  '.repeat(level);
 
