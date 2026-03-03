@@ -1,4 +1,4 @@
-import { mappingSchema as schema } from '../../src';
+import { mappingSchema as schema } from '../../src/index.ts';
 import { Validator } from 'jsonschema';
 import { expect } from 'chai';
 
@@ -7,7 +7,7 @@ describe('mappingSchema', () => {
 	let v: Validator;
 	beforeAll(() => {
 		v = new Validator();
-	})
+	});
 
 	it('successfully validates correct mapping', () => {
 

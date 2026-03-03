@@ -1,1 +1,1 @@
-export { default as createGlobalContext } from './createGlobalContext';
+export { default as createGlobalContext } from './createGlobalContext.ts';

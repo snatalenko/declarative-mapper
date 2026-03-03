@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { createGlobalContext } from '../../src/runtime';
+import { createGlobalContext } from '../../src/runtime/index.ts';
 
 describe('createGlobalContext', () => {
 

@@ -1,13 +1,12 @@
-
-import { mappingForSchema, createMapper } from '../../src';
-import { JSONSchema4 } from 'json-schema';
-import * as sampleSchema from './data/sampleSchema.json'
+import { mappingForSchema, createMapper } from '../../src/index.ts';
+import type { JSONSchema4 } from 'json-schema';
+import * as sampleSchema from './data/sampleSchema.json';
 import { expect } from 'chai';
-import { TRootMapping, TValueMap } from '../../src/TMapping';
+import type { RootMapping } from '../../src/mappingTypes.ts';
 
 function clone<T>(obj: T): T {
-	return JSON.parse(JSON.stringify(obj))
-};
+	return JSON.parse(JSON.stringify(obj));
+}
 
 describe('mappingForSchema', () => {
 
@@ -21,11 +20,11 @@ describe('mappingForSchema', () => {
 				shortText: '"te"',
 				textWithExample: '"example 1"',
 				textWithDefault: '"example 2"',
-				bool: "true",
-				null: "null",
-				numWithMax: "199.99",
-				numWithMin: "100.01",
-				number: "1",
+				bool: 'true',
+				null: 'null',
+				numWithMax: '199.99',
+				numWithMin: '100.01',
+				number: '1',
 				int: '101',
 				array: {
 					forEach: '',
@@ -41,9 +40,9 @@ describe('mappingForSchema', () => {
 				},
 				tupleArray: {
 					map: {
-						'0': '"text"',
-						'1': '1',
-						'2': {
+						0: '"text"',
+						1: '1',
+						2: {
 							map: {
 								foo: '"bar"'
 							}
@@ -52,12 +51,12 @@ describe('mappingForSchema', () => {
 				},
 				complexObject: {
 					map: {
-						foo: "\"bar\"",
-						baz: "true"
+						foo: '"bar"',
+						baz: 'true'
 					}
 				},
-				multiChoice: "\"text\"",
-				oneChoice: "\"text\"",
+				multiChoice: '"text"',
+				oneChoice: '"text"',
 				withAdditionalProps: {
 					map: {}
 				}
@@ -70,7 +69,7 @@ describe('mappingForSchema', () => {
 		// @ts-ignore
 		mapping?.map?.stringArray?.forEach = '[{}]';
 
-		const mapper = createMapper(mapping as TRootMapping);
+		const mapper = createMapper(mapping as RootMapping);
 
 		const result = mapper({});
 

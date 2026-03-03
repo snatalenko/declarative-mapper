@@ -1,21 +1,22 @@
-Declarative Mapper for NodeJS
+Declarative Mapper for Node.js
 =============================
 
-[![NPM Version](https://img.shields.io/npm/v/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
-[![Build](https://github.com/snatalenko/declarative-mapper/workflows/build/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
-[![Coverage Status](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
-[![NPM Downloads](https://img.shields.io/npm/dm/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
+[![Version](https://img.shields.io/npm/v/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
+[![Coverage](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
+[![Downloads](https://img.shields.io/npm/dm/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
+[![License](https://img.shields.io/github/license/snatalenko/declarative-mapper.svg)](https://github.com/snatalenko/declarative-mapper)
+[![Tests/Audit](https://github.com/snatalenko/declarative-mapper/actions/workflows/ci.yml/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
 
 ## Reasoning
 
-On a couple of projects I needed a library that would allow users to convert one JSON format to another (say, Invoice from one system to another). It should have operated with a **declarative mapping** instructions to allow configuration by users from UI. Also, it should have been **flexible** enough to accommodate various tricky requirements, but **secure**, to prevent JS injections. And **fast**, to process incoming streams with millions of records.
+On several projects, I needed a library that could convert one JSON format to another (for example, an invoice from one system into another). It had to support **declarative mapping** instructions so users could configure mappings from a UI. It also had to be **flexible** enough for complex requirements, **secure** against JS injection, and **fast** enough to process streams with millions of records.
 
-That's where the "declarative-mapping" came in:
+That is where Declarative Mapper came in:
 
-- **Declarative** - declarative mapping instructions allows mapping configuration from UI. in simple scenarios no technical knowledge needed, but I still have plans to build a nicer mapping editor
-- **Flexible** - run JS underneath to allow any kind of instructions
-- **Secure** - restricts access to outside environment by executing mapping in a separate [V8 Virtual Machine](https://nodejs.org/api/vm.html) context
-- **Fast** - mapping instructions are compiled once on beginning, which allows to process ~200k obj/sec on Apple M1 Pro
+- **Declarative** - declarative mapping instructions allow configuration from a UI. In simple scenarios, no technical knowledge is needed.
+- **Flexible** - runs JavaScript under the hood to support complex instructions.
+- **Secure** - restricts access to the outside environment by executing mappings in a separate [V8 Virtual Machine](https://nodejs.org/api/vm.html) context.
+- **Fast** - mapping instructions are compiled once up front, allowing processing at ~200k objects/sec on Apple M1 Pro.
 - **Typed** - written in TypeScript
 - **Lightweight** - no dependencies
 
@@ -55,22 +56,39 @@ expect(result).to.eql({
 
 ## Mapping Instructions
 
-In mapping JSON, left side is a key in the resulting object, right side is either a string with a valid JS expression, or an object with mapping instructions.
+In mapping JSON, the left side is a key in the resulting object.
+The right side is either a string with a valid JS expression or an object with mapping instructions.
 
-| Expression  | Description  |
-| --- | --- |
-| `"key": "100"`  | numeric value, produces `"key": 100`  |
-| `"key": "true"`  | boolean value, produces `"key": true`  |
-| `"key": "\"test\""` or<br /> `"key": "'text'"`  |  text value. as you can see, it has its own quotation marks. produces `"key": "text"`  |
-| `"key": "foo"`  | access to an input variable `foo`  |
-| `"key": "Number(foo)"`  | access to an input variable `foo` converted to a number, produces `"key": 100`  |
-| `"key": "arr.filter(el => ...)"`  | more complex JS expression that produces an array  |
-| `"key": { … }`  | object mapping, where “…” contains inner properties  |
-| `"key": { "map": { … } }`  | same as above, but more verbose  |
-| `"key": { "forEach": "…", "map": { … } }`  | array mapped from input  |
-| `"key": { "0": { … }, "1": { … } }`  | array with a predefined set of elements  |
-| `"key": { "from": "…", "map": { … } }`  | object mapping from a different context   |
-
+```js
+{
+  "key": "100",               // numeric value, produces `"key": 100`
+  "key": "true",              // boolean value, produces `"key": true`
+  "key": "'text'",            // text value, produces `"key": "text"` (notice inner quotation marks)
+  "key": "foo",               // access to an input variable `foo`
+  "key": "Number(foo)",       // access to an input variable `foo` converted to a number, produces `"key": 100`
+  "key": "arr.map(e => ...)", // more complex JS expression that produces an array
+  "key": {                    // object mapping, produces `{ foo: 'bar' }`
+    "foo": "'bar'"
+  }, 
+  "key": {                    // same as above, but more verbose
+    "map": { /*...*/ }
+  },
+  "key": {                    // array mapped from input
+    "forEach": "nested.array.filter(e => !!e)",
+    "map": { /*...*/ }        // $record, $index, $collection are available in "map"
+  },
+  "key": {                    // tuple array
+    "0": { /*...*/ },
+    "1": { /*...*/ },
+    "5": { /*...*/ }
+  },
+  "key": {                    // object mapping from a different context 
+    "from": "some.nested.field",
+    "map": { /*...*/ }
+  },
+  "${prefix}_${id}": "value", // dynamic output key (template interpolation)
+}
+```
 
 ### Objects
 
@@ -91,7 +109,7 @@ or
   } 
 ```
 
-Both above examples produce same result (despite that the second example is more verbose and made to have a consistent format with array mappings):
+Both examples above produce the same result (the second one is more verbose, but keeps a consistent format with array mappings):
 
 ```json
   "key": {
@@ -101,7 +119,7 @@ Both above examples produce same result (despite that the second example is more
 
 ### Arrays
 
-Let's assume we have an input with an array of objects in it, and we need to produce an array of objects, one for each element in the input. In a such case the `"forEach": "", "map": {}` construction can be used:
+Assume we have input with an array of objects and need to produce one output object per element. In such cases, the `"forEach": "", "map": {}` construction can be used:
 
 ```json
 {
@@ -132,12 +150,12 @@ Result:
   }]
 ```
 
-Note that the execution context in a such mapping shifts into the input objects and inner properties can be referenced directly as `arrayInnerProperty` instead of `inputArray[index].arrayInnerProperty`. More on that in the [Context Switching](#context-switching)
+In this mapping, the execution context shifts to each input object, so inner properties can be referenced directly as `arrayInnerProperty` instead of `inputArray[index].arrayInnerProperty`. More on that in [Context Switching](#context-switching).
 
 
 #### String[] from Object[]
 
-In case array should contain plain values instead of objects, left side of the expression should contain `"*"` instead of the key name:
+If the array should contain plain values instead of objects, use `"*"` on the left side instead of a key name:
 
 ```json
   "key": {
@@ -159,7 +177,7 @@ Produces:
 
 #### String[] from String[]
 
-Arrays with simple values can be mapped in a same way, while current iterating element can accessed as `$record`:
+Arrays with simple values can be mapped the same way, and the current iterated element is available as `$record`:
 
 ```json
 {
@@ -184,7 +202,7 @@ Result:
 
 ### Array with predefined set of elements
 
-In case array should have a predefined set of elements, each of the elements can be mapped by its index:
+If the array should have a predefined set of elements, each element can be mapped by index:
 
 ```json
   "key": {
@@ -211,7 +229,7 @@ Result:
 
 ### Context Switching
 
-When arrays are mapped with the `"forEach": "", "map": {}` statement, the execution context switches automatically to the objects selected by `forEach` ([see above](#arrays)). Similar technique can be useful when a large number of properties need to be mapped from an object located outside of the current execution context. In a such case the `"from": "", "map": {}` statement can be used.
+When arrays are mapped with the `"forEach": "", "map": {}` statement, the execution context automatically switches to the objects selected by `forEach` ([see above](#arrays)). A similar technique is useful when many properties need to be mapped from an object outside the current context. In that case, use the `"from": "", "map": {}` statement.
 
 
 
@@ -237,12 +255,49 @@ Or up in the source document:
   }
 ```
 
-Here are the special variables that can be handy for the context switching:
+These special variables are useful for context switching:
 
 - `$record` - current element of the array being iterated with `forEach`
 - `$index` - index of the current array element
 - `$collection` - entire collection of the elements being iterated
 - `$input` - entire document passed as mapping input
+
+### Dynamic Output Keys
+
+You can build output property names dynamically with template-based keys on the left side.
+This works in regular mappings, `forEach` mappings, and `from` mappings.
+
+```json
+{
+  "${prefix}_${id}": "value"
+}
+```
+
+For input:
+
+```json
+{
+  "prefix": "item",
+  "id": 7,
+  "value": "abc"
+}
+```
+
+Output:
+
+```json
+{
+  "item_7": "abc"
+}
+```
+
+To keep `${...}` as a literal key (without interpolation), escape it with a leading backslash:
+
+```json
+{
+  "\\${prefix}_${id}": "value"
+}
+```
 
 
 ## Complex Mapping Example
@@ -332,4 +387,3 @@ const result = mapper(input);
 
 expect(result).to.eql(desiredOutput);
 ```
-

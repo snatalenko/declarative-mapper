@@ -1,6 +1,4 @@
-'use strict';
-
-import { JSONSchema4 } from 'json-schema';
+import type { JSONSchema4 } from 'json-schema';
 
 const isObject = v => v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date);
 
@@ -10,7 +8,7 @@ function getUniqueValues<TElement>(arr: TElement[]): TElement[] {
 		el
 	]);
 	return Array.from(new Map(kvPairs).values());
-};
+}
 
 export default function mergeSchema(dest: JSONSchema4, src: JSONSchema4): JSONSchema4 {
 	const result = { ...dest };
@@ -23,4 +21,4 @@ export default function mergeSchema(dest: JSONSchema4, src: JSONSchema4): JSONSc
 			result[key] = src[key];
 	}
 	return result;
-};
+}

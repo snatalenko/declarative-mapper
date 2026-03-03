@@ -1,5 +1,5 @@
-import { JSONSchema4 } from 'json-schema';
-import { default as mergeSchema } from './utils/mergeSchema';
+import type { JSONSchema4 } from 'json-schema';
+import { default as mergeSchema } from './utils/mergeSchema.ts';
 
 /**
  * Create sample data for a given JSON schema
@@ -41,7 +41,7 @@ export default function sampleForSchema(schema: JSONSchema4) {
 	else if (oneOf) {
 		return sampleForSchema(oneOf[0]);
 	}
-	else if(schema.enum && schema.enum.length) {
+	else if (schema.enum && schema.enum.length) {
 		return schema.enum[0];
 	}
 	else if (type === 'string') {
@@ -70,20 +70,20 @@ export default function sampleForSchema(schema: JSONSchema4) {
 		return null;
 	}
 	else if (type === 'object') {
-		const r = {};
+		const r = {} as any;
 		for (const [fieldName, fieldSchema] of Object.entries(properties || {}))
 			r[fieldName] = sampleForSchema(fieldSchema);
 
 		if (typeof additionalProperties === 'object' && additionalProperties)
-			r['additionalProp1'] = sampleForSchema(additionalProperties);
+			r.additionalProp1 = sampleForSchema(additionalProperties);
 
 		return r;
 	}
 	else if (type === 'array') {
 		if (Array.isArray(items)) {
-			return items.map(sampleForSchema)
+			return items.map(sampleForSchema);
 		}
-		else if(items) {
+		else if (items) {
 			if (schema.minItems !== undefined)
 				return Array.from({ length: schema.minItems }, () => sampleForSchema(items));
 

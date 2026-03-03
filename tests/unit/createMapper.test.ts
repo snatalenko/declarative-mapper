@@ -14,7 +14,7 @@ describe('createMapper', () => {
 
 		const mapper = createMapper({
 			map: {
-				'foo': '"bar"'
+				foo: '"bar"'
 			}
 		});
 
@@ -29,7 +29,7 @@ describe('createMapper', () => {
 
 		const mapper = createMapper({
 			map: {
-				'foo': 'a'
+				foo: 'a'
 			}
 		});
 
@@ -43,13 +43,75 @@ describe('createMapper', () => {
 	it('maps values from source document (without `map` directive)', () => {
 
 		const mapper = createMapper({
-			'foo': 'a'
+			foo: 'a'
 		});
 
 		const result = mapper({ a: 'b' });
 
 		expect(result).to.eql({
 			foo: 'b'
+		});
+	});
+
+	it('maps empty field expression to null', () => {
+
+		const mapper = createMapper({
+			map: {
+				foo: ''
+			}
+		});
+
+		const result = mapper({});
+
+		expect(result).to.eql({
+			foo: null
+		});
+	});
+
+	it('maps empty root `*` expression to null', () => {
+
+		const mapper = createMapper({
+			map: {
+				'*': ''
+			}
+		});
+
+		const result = mapper({});
+
+		expect(result).to.equal(null);
+	});
+
+	it('maps dynamic property names using template expressions', () => {
+
+		const mapper = createMapper({
+			map: {
+				'${prefix}_${id}': 'value'
+			}
+		});
+
+		const result = mapper({
+			prefix: 'item',
+			id: 7,
+			value: 'abc'
+		});
+
+		expect(result).to.eql({
+			item_7: 'abc'
+		});
+	});
+
+	it('supports escaping template interpolation in property names', () => {
+
+		const mapper = createMapper({
+			map: {
+				'\\${foo}': '"bar"'
+			}
+		});
+
+		const result = mapper({ foo: 'ignored' });
+
+		expect(result).to.eql({
+			'${foo}': 'bar'
 		});
 	});
 
@@ -81,6 +143,28 @@ describe('createMapper', () => {
 			]);
 		});
 
+		it('maps dynamic property names in `forEach` context', () => {
+
+			const mapper = createMapper({
+				forEach: 'arr',
+				map: {
+					'${$index}_${code}': 'qty'
+				}
+			});
+
+			const result = mapper({
+				arr: [
+					{ code: 'A', qty: 10 },
+					{ code: 'B', qty: 20 }
+				]
+			});
+
+			expect(result).to.eql([
+				{ '0_A': 10 },
+				{ '1_B': 20 }
+			]);
+		});
+
 		it('safely handles nonexistent properties in `forEach` directive', () => {
 
 			const input = {};
@@ -99,8 +183,8 @@ describe('createMapper', () => {
 
 		it('throws errors on incorrectly formatted instructions', () => {
 
-			expect(() => createMapper({ forEach: 'test', map: '' })).to.throw("Property \"map\" is empty in mapping \"{\"forEach\":\"test\",\"map\":\"\"}\"");
-			expect(() => createMapper({ forEach: '', map: {} })).to.throw('Property \"forEach\" is empty in mapping \"{\"forEach\":\"\",\"map\":{}}\"');
+			expect(() => createMapper({ forEach: 'test', map: '' })).to.throw('Property "map" is empty in mapping "{"forEach":"test","map":""}"');
+			expect(() => createMapper({ forEach: '', map: {} })).to.throw('Property "forEach" is empty in mapping "{"forEach":"","map":{}}"');
 		});
 
 		it('does not treat mapping as a `forEach` directive if it contains other properties', () => {
@@ -154,6 +238,29 @@ describe('createMapper', () => {
 			});
 		});
 
+		it('maps dynamic property names in `from` context', () => {
+
+			const mapper = createMapper({
+				from: 'container.nested',
+				map: {
+					'${id}': 'value'
+				}
+			});
+
+			const result = mapper({
+				container: {
+					nested: {
+						id: 'sku_1',
+						value: 100
+					}
+				}
+			});
+
+			expect(result).to.eql({
+				sku_1: 100
+			});
+		});
+
 		it('handles references to non-existing properties in `from` directive', () => {
 
 			const input = {
@@ -176,8 +283,8 @@ describe('createMapper', () => {
 
 		it('throws errors on incorrectly formatted instructions', () => {
 
-			expect(() => createMapper({ from: 'test', map: '' })).to.throw("Property \"map\" is empty in mapping \"{\"from\":\"test\",\"map\":\"\"}\"");
-			expect(() => createMapper({ from: '', map: {} })).to.throw('Property \"from\" is empty in mapping \"{\"from\":\"\",\"map\":{}}\"');
+			expect(() => createMapper({ from: 'test', map: '' })).to.throw('Property "map" is empty in mapping "{"from":"test","map":""}"');
+			expect(() => createMapper({ from: '', map: {} })).to.throw('Property "from" is empty in mapping "{"from":"","map":{}}"');
 		});
 
 		it('does not treat mapping as a `from` directive if it contains other properties', () => {
@@ -209,8 +316,8 @@ describe('createMapper', () => {
 		};
 
 		const map1 = {
-			'0': 'foo',
-			'1': '"baz"'
+			0: 'foo',
+			1: '"baz"'
 		};
 
 		const result1 = createMapper(map1)(input);
@@ -267,7 +374,7 @@ describe('createMapper', () => {
 		const log: string[] = [];
 
 		createMapper({
-			map: { foo: 'true' },
+			map: { foo: 'true' }
 		}, {
 			logger: {
 				trace(msg) {
@@ -283,7 +390,7 @@ with ($createGlobalContext($input)) {
   $result =
     (() => {
       return {
-        'foo': true,
+        [\`foo\`]: true,
       };
     })()
 }`);

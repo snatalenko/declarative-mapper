@@ -1,20 +1,21 @@
-import { TRootMapping } from './TMapping';
+import type { RootMapping } from './mappingTypes.ts';
 import * as vm from 'vm';
-import createScript from './createScript';
-import { createGlobalContext } from './runtime';
+import createScript from './createScript.ts';
+import { createGlobalContext } from './runtime/index.ts';
 
 interface ILogger {
 	trace(message: string, ...args: any[]): void;
 }
 
 type TMappingScriptEnvironment<TSource, TResult> = {
+
 	/** Main input source */
 	$input?: TSource;
 
 	/** Placeholder for mapping output */
 	$result?: TResult;
 
-	/** 
+	/**
 	 * Method for top level context creation.
 	 * Resulting object catches all variable requests
 	 * and returns `undefined` instead of ReferenceError
@@ -33,7 +34,7 @@ type TMappingScriptEnvironment<TSource, TResult> = {
  * @param options.logger
  *  Logger instance for trace output
  */
-export default function createMapper<TSource extends object, TResult>(map: TRootMapping, options?: {
+export default function createMapper<TSource extends object, TResult>(map: RootMapping, options?: {
 	extensions?: object,
 	logger?: ILogger
 }) {
@@ -68,4 +69,4 @@ export default function createMapper<TSource extends object, TResult>(map: TRoot
 
 		return context.$result;
 	};
-};
+}

@@ -46,7 +46,7 @@ const STANDARD_OBJECT_NAMES = [
 	'Intl',
 	'$input',
 	'$result'
-]
+];
 
 export default function createGlobalContext(context: object, extensionNames?: string[]): any {
 	return new Proxy(context, {
@@ -62,11 +62,11 @@ export default function createGlobalContext(context: object, extensionNames?: st
 		 * Returns property by its name.
 		 * Does not throw `ReferenceError` and returns `undefined` when property doesn't exist.
 		 */
-		get(target: object, key: string, receiver: object) {
+		get(target: object, key: string) {
 			if (key in target)
 				return target[key];
 
 			return undefined;
 		}
-	})
+	});
 }
