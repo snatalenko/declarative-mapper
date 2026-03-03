@@ -18,7 +18,7 @@ Declarative Mapper for Node.js
   - [String\[\] from Object\[\]](#string-from-object)
   - [String\[\] from String\[\]](#string-from-string)
   - [Tuple Arrays](#tuple-arrays)
-  - [Runtime Variables ($input, $record, $index, $collection)](#runtime-variables-input-record-index-collection)
+  - [Context Switching](#context-switching)
   - [Dynamic Output Keys](#dynamic-output-keys)
 - [Complex Mapping Example](#complex-mapping-example)
 
@@ -177,7 +177,7 @@ Result:
 In this mapping, the execution context shifts to each input object, so inner properties can be referenced directly as `arrayInnerProperty` instead of `inputArray[index].arrayInnerProperty`.
 
 Inside `forEach` mappings, `$record`, `$index`, `$collection`, and `$input` are also available.
-More on that in [Runtime Variables](#context-switching).
+More on that in [Context Switching](#context-switching).
 
 
 #### String[] from Object[]
