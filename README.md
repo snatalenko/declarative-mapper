@@ -414,14 +414,16 @@ const mapping = {
     }
   },
 
-  // property mapping from an array
-  total: 'LINE_ITEMS.reduce((sum, { QTY, PRICE }) => sum + (QTY * PRICE), 0)'
+  // property mapping from an array,
+  // with a custom reducer function defined in `extensions`
+  total: '$sum(LINE_ITEMS, i => i.QTY * i.PRICE)'
 };
 
 // Pre-compiled function that can be executed any number of times
 const mapper = createMapper(mapping, {
   extensions: {
-    itemCatalog
+    itemCatalog,
+    $sum: (arr, cb) => arr.reduce((t, el) => t + cb(el), 0)
   }
 });
 
