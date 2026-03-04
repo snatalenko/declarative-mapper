@@ -26,6 +26,7 @@ Declarative Mapper is a JSON data transformation and object mapping library for 
   - [Tuple Arrays](#tuple-arrays)
   - [Context Switching](#context-switching)
   - [Dynamic Output Keys](#dynamic-output-keys)
+- [Extensions](#extensions)
 - [Complex Mapping Example](#complex-mapping-example)
 
 ### Reasoning
@@ -356,6 +357,27 @@ To keep `${...}` as a literal key (without interpolation), escape it with a lead
   "\\${prefix}_${id}": "value"
 }
 ```
+
+## Extensions
+
+Use `extensions` to pass helper functions and lookup data into mapping expressions:
+
+```ts
+const mapper = createMapper({
+  code: 'catalog[itemId]',
+  normalizedName: 'normalize(name)'
+}, {
+  extensions: {
+    catalog: { A1: 'SKU-001' },
+    normalize: (s: string) => s.trim().toUpperCase()
+  }
+});
+```
+
+Extension keys are available as globals in expressions.
+
+If an extension key conflicts with an input field name, mapper throws an error.
+
 
 
 ## Complex Mapping Example
