@@ -1,5 +1,5 @@
-Declarative Mapper for Node.js
-=============================
+Declarative Mapper
+==================
 
 [![Version](https://img.shields.io/npm/v/declarative-mapper.svg)](https://www.npmjs.com/package/declarative-mapper)
 [![Coverage](https://coveralls.io/repos/github/snatalenko/declarative-mapper/badge.svg?branch=master&v=1.7.1)](https://coveralls.io/github/snatalenko/declarative-mapper?branch=master)
@@ -7,9 +7,14 @@ Declarative Mapper for Node.js
 [![License](https://img.shields.io/github/license/snatalenko/declarative-mapper.svg?v=1.7.1)](https://github.com/snatalenko/declarative-mapper)
 [![Tests/Audit](https://github.com/snatalenko/declarative-mapper/actions/workflows/ci.yml/badge.svg)](https://github.com/snatalenko/declarative-mapper/actions)
 
-## Table of Contents
+## Overview
+
+Declarative Mapper is a JSON data transformation and object mapping library for JavaScript/TypeScript. Define declarative mapping templates to convert documents quickly, with schema helpers and safe VM-based execution.
+
+### Table of Contents
 
 - [Overview](#overview)
+  - [Reasoning](#reasoning)
   - [Quick Start Example](#quick-start-example)
   - [Compatibility](#compatibility)
 - [Mapping Instructions](#mapping-instructions)
@@ -23,7 +28,7 @@ Declarative Mapper for Node.js
   - [Dynamic Output Keys](#dynamic-output-keys)
 - [Complex Mapping Example](#complex-mapping-example)
 
-## Overview
+### Reasoning
 
 On several projects, I needed a library that could convert one JSON format to another (for example, an invoice from one system into another). It had to support **declarative mapping** instructions so users could configure mappings from a UI. It also had to be **flexible** enough for complex requirements, **secure** against JS injection, and **fast** enough to process streams with millions of records.
 
@@ -75,7 +80,7 @@ const mapper = createMapper({
 const results = sourceOrders.map(mapper); 
 ```
 
-## Compatibility
+### Compatibility
 
 - **Node.js:** 16+
 - **Browser:** best effort support; requires a `vm` polyfill
