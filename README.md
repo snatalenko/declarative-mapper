@@ -11,6 +11,7 @@ Declarative Mapper for Node.js
 
 - [Overview](#overview)
   - [Quick Start Example](#quick-start-example)
+  - [Compatibility](#compatibility)
 - [Mapping Instructions](#mapping-instructions)
   - [Runtime Variables Quick Reference](#runtime-variables-quick-reference)
   - [Objects](#objects)
@@ -73,6 +74,11 @@ const mapper = createMapper({
 // Use in a loop; 200k+ objects/sec
 const results = sourceOrders.map(mapper); 
 ```
+
+## Compatibility
+
+- **Node.js:** 16+
+- **Browser:** best effort support; requires a `vm` polyfill
 
 ## Mapping Instructions
 

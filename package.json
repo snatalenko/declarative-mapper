@@ -20,6 +20,9 @@
     "typescript"
   ],
   "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
   "main": "dist/cjs/index.js",
   "types": "types/index.d.ts",
   "exports": {
