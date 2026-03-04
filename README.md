@@ -40,33 +40,38 @@ That is where Declarative Mapper came in:
 
 ```ts
 import { createMapper } from 'declarative-mapper';
-import { expect } from 'chai';
 
-
-const sourceObject = {
-  foo: 'bar'
-};
-
-const mappingInstructions = {
-  myObj: {
-    myField: 'foo',
-    myFieldLength: 'foo.length'
+// Source records from system A
+const sourceOrders = [
+  {
+    orderId: 'SO-1001',
+    customerName: 'Acme Ltd',
+    lineItems: [{ sku: 'A-1', qty: 2, unitPrice: 10 }]
+  },
+  {
+    orderId: 'SO-1002',
+    customerName: 'Globex',
+    lineItems: [{ sku: 'B-9', qty: 1, unitPrice: 25 }]
   }
-};
+];
 
-
-// Convert declarative instructions to a pre-compiled
-// function that can be executed any number of times
-const mapper = createMapper(mappingInstructions);
-
-const result = mapper(sourceObject);
-
-expect(result).to.eql({
-  myObj: {
-    myField: 'bar',
-    myFieldLength: 3
-  }
+// Compile once
+const mapper = createMapper({
+  id: 'orderId',
+  customer: 'customerName',
+  items: {
+    forEach: 'lineItems',
+    map: {
+      code: 'sku',
+      quantity: 'qty',
+      amount: 'qty * unitPrice'
+    }
+  },
+  totalAmount: 'lineItems.reduce((sum, i) => sum + (i.qty * i.unitPrice), 0)'
 });
+
+// Use in a loop; 200k+ objects/sec
+const results = sourceOrders.map(mapper); 
 ```
 
 ## Mapping Instructions
