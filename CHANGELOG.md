@@ -1,3 +1,16 @@
+## [1.7.2](https://github.com/snatalenko/declarative-mapper/compare/v1.7.1...v1.7.2) (2026-03-04)
+
+
+### Documentation
+
+* Add example of an extension function ([085bcb7](https://github.com/snatalenko/declarative-mapper/commit/085bcb7aee9cfea1484ffa468b44d0ed55caa56e))
+* Fix TOC in readme ([f0332e6](https://github.com/snatalenko/declarative-mapper/commit/f0332e65390e42f9155c1ccf9f320bd63f26487f))
+* Describe `extensions` ([5d62ae9](https://github.com/snatalenko/declarative-mapper/commit/5d62ae98d0171fb8f0f78248867d4ccb10b40f61))
+* Drop nodejs requirement; browser is supported ([9e83a9c](https://github.com/snatalenko/declarative-mapper/commit/9e83a9cd33fd5bec2bcfac04f6829cac3e705186))
+* Add compatibility and engine requirements ([6bd6c25](https://github.com/snatalenko/declarative-mapper/commit/6bd6c25b00c331cb7e1c56d7c1dae659b6e87bbe))
+* Cleanup the quick start example ([6ac50d8](https://github.com/snatalenko/declarative-mapper/commit/6ac50d890001f2ecdff922ceff529d892799f86a))
+
+
 ## [1.7.1](https://github.com/snatalenko/declarative-mapper/compare/v1.7.0...v1.7.1) (2026-03-03)
 
 
