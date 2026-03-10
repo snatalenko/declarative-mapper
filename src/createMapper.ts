@@ -52,12 +52,12 @@ export default function createMapper<TSource extends object, TResult>(map: RootM
 		...options?.extensions
 	};
 
-	const context = vm.createContext(sandbox);
+	const ctx = vm.createContext(sandbox);
 
 	return (document: TSource): TResult | undefined => {
 
-		context.$input = document;
-		context.$result = undefined;
+		ctx.$input = document;
+		ctx.$result = undefined;
 
 		if (extensionNames) {
 			const conflictingKey = Object.keys(document).find(inputKey => extensionNames.includes(inputKey));
@@ -65,8 +65,8 @@ export default function createMapper<TSource extends object, TResult>(map: RootM
 				throw new TypeError(`Extension "${conflictingKey}" conflicts with a field name passed in input`);
 		}
 
-		script.runInContext(context);
+		script.runInContext(ctx);
 
-		return context.$result;
+		return ctx.$result;
 	};
 }

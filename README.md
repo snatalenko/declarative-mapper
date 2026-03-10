@@ -16,7 +16,8 @@ Declarative Mapper is a JSON data transformation and object mapping library for 
 - [Overview](#overview)
   - [Reasoning](#reasoning)
   - [Quick Start Example](#quick-start-example)
-  - [Compatibility](#compatibility)
+- [Compatibility](#compatibility)
+- [Security](#security)
 - [Mapping Instructions](#mapping-instructions)
   - [Runtime Variables Quick Reference](#runtime-variables-quick-reference)
   - [Objects](#objects)
@@ -81,10 +82,17 @@ const mapper = createMapper({
 const results = sourceOrders.map(mapper); 
 ```
 
-### Compatibility
+## Compatibility
 
 - **Node.js:** 16+
 - **Browser:** best effort support; requires a `vm` polyfill
+
+## Security
+
+Similar mappings can be achieved with plain JavaScript, but this library is designed for a different case: user-controlled mapping templates executed on the server.
+
+Mappings stay simple for non-technical users, while technical users can still use JavaScript expressions.
+Instead of `eval`, expressions run in an isolated VM context with built-ins, mapping input, and explicit `extensions` only, which reduces JS injection risk.
 
 ## Mapping Instructions
 

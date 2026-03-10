@@ -424,6 +424,50 @@ with ($createGlobalContext($input)) {
 		});
 	});
 
+	describe('security', () => {
+
+		it('does not expose process/global objects to mapping expressions', () => {
+
+			const mapper = createMapper({
+				directProcess: 'process',
+				globalThisProcess: 'globalThis?.process'
+			});
+
+			const result = mapper({});
+
+			expect(result).to.eql({
+				directProcess: undefined,
+				globalThisProcess: undefined
+			});
+		});
+
+		it('blocks constructor-based access to process', () => {
+
+			const mapper = createMapper({
+				value: '(() => { try { return [].filter.constructor("return process")().pid; } catch (e) { return "blocked"; } })()'
+			});
+
+			const result = mapper({});
+
+			expect(result).to.eql({
+				value: 'blocked'
+			});
+		});
+
+		it('blocks Function-based require access', () => {
+
+			const mapper = createMapper({
+				value: '(() => { try { return Function("return require(\\"fs\\")")(); } catch (e) { return "blocked"; } })()'
+			});
+
+			const result = mapper({});
+
+			expect(result).to.eql({
+				value: 'blocked'
+			});
+		});
+	});
+
 	describe('*', () => {
 
 		it('maps result from simple type', () => {
