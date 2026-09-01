@@ -1,3 +1,19 @@
+## [2.1.0-beta.0](https://github.com/snatalenko/morphos/compare/v2.0.0...v2.1.0-beta.0) (2026-09-01)
+
+### Features
+
+* Support for oneOf, allOf, anyOf in json schema editor ([adc4a0c](https://github.com/snatalenko/morphos/commit/adc4a0cf1f1990bbd2da7c4950cf5b052f9142f4))
+
+### Chores
+
+* Publish mapping json schema ([c35db20](https://github.com/snatalenko/morphos/commit/c35db20519747d5050fbb0ea667c14b856768951))
+
+### Documentation
+
+* Update documentation for schema and mapping editors ([8c6caff](https://github.com/snatalenko/morphos/commit/8c6caffe2c2c68359742809de917560dedb7b5ad))
+* Add "Full screen" switches to playgrond schemas ([5167c77](https://github.com/snatalenko/morphos/commit/5167c778a4e6e2acb22b0d0de894912a5467852a))
+* Minor documentation improvements ([811fb16](https://github.com/snatalenko/morphos/commit/811fb1693b0dbaff1b84738ad198523c37921c4e))
+
 ## [2.0.0](https://github.com/snatalenko/morphos/compare/v1.7.2...v2.0.0) (2026-08-15)
 
 ### Features
