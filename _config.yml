@@ -55,18 +55,18 @@ defaults:
       path: src/react/README.md
     values:
       layout: docs
-      title: React Mapping Editor
+      title: React JSON Mapping Editor
       nav: react
       nav_title: Mapping Editor
       nav_group: modules
       nav_order: 1
       eyebrow: Morphos module
-      description: Build and edit Morphos JSON mapping specifications in React with schema-driven suggestions, localization, and customizable components.
+      description: Lightweight, customizable React JSON mapping editor with schema-guided suggestions and replaceable layouts, controls, and nested sections.
       source_path: src/react/README.md
       source_url: https://github.com/snatalenko/morphos/blob/master/src/react/README.md
       permalink: /react/
       content_start_id: overview
-      last_modified_at: 2026-05-23
+      last_modified_at: 2026-09-01
       sitemap: true
   - scope:
       path: src/react-schema-editor/README.md
@@ -78,12 +78,12 @@ defaults:
       nav_group: modules
       nav_order: 2
       eyebrow: Morphos module
-      description: Create and edit JSON Schemas in React using the Morphos schema editor and its default or Bootstrap component themes.
+      description: Lightweight, customizable React JSON Schema editor with replaceable layouts, controls, and nested-property presentation.
       source_path: src/react-schema-editor/README.md
       source_url: https://github.com/snatalenko/morphos/blob/master/src/react-schema-editor/README.md
       permalink: /react-schema-editor/
       content_start_id: overview
-      last_modified_at: 2026-06-23
+      last_modified_at: 2026-09-01
       sitemap: true
   - scope:
       path: src/openai/README.md

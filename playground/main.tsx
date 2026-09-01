@@ -965,6 +965,7 @@ function App() {
 										value={sourceSchema ?? emptySchema}
 										onChange={updateSourceSchemaFromEditor}
 										components={schemaComponents}
+										exposeDescription={sourceExpanded}
 									/>
 								</div>
 							)}
@@ -1437,6 +1438,7 @@ function App() {
 										value={destSchema ?? emptySchema}
 										onChange={updateDestSchemaFromEditor}
 										components={schemaComponents}
+										exposeDescription={destinationExpanded}
 									/>
 								</div>
 							)}
