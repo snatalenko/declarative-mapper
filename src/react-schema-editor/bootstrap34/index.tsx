@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, type ComponentType } from 'react';
 import { LabelsContext } from '../LabelsContext.ts';
 import type {
 	AddPropertyInputProps,
+	AddOptionButtonProps,
 	CheckboxFieldSettingProps,
 	CheckboxProps,
 	ContainerProps,
@@ -187,10 +188,10 @@ export const TextareaFieldSetting: ComponentType<TextareaFieldSettingProps> = ({
 	</div>
 );
 
-export const RemoveButton: ComponentType<RemoveButtonProps> = ({ onClick }) => {
+export const RemoveButton: ComponentType<RemoveButtonProps> = ({ onClick, label }) => {
 	const labels = useContext(LabelsContext);
 	return (
-		<button type="button" className="btn btn-default" onClick={onClick} aria-label={labels.removeProperty}>
+		<button type="button" className="btn btn-default" onClick={onClick} aria-label={label ?? labels.removeProperty}>
 			×
 		</button>
 	);
@@ -219,6 +220,17 @@ export const AddPropertyInput: ComponentType<AddPropertyInputProps> = ({
 	);
 };
 
+export const AddOptionButton: ComponentType<AddOptionButtonProps> = ({ onClick }) => {
+	const labels = useContext(LabelsContext);
+	return (
+		<div style={{ marginTop: 8, textAlign: 'left' }}>
+			<button type="button" className="btn btn-default" onClick={onClick}>
+				{labels.addOption}
+			</button>
+		</div>
+	);
+};
+
 const components: Partial<SchemaEditorComponents> = {
 	Container,
 	Row,
@@ -233,7 +245,8 @@ const components: Partial<SchemaEditorComponents> = {
 	CheckboxFieldSetting,
 	TextareaFieldSetting,
 	RemoveButton,
-	AddPropertyInput
+	AddPropertyInput,
+	AddOptionButton
 };
 
 export default components;

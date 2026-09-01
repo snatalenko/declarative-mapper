@@ -3,7 +3,8 @@ import type { JsonSchema } from '../JsonSchema.ts';
 
 export type { JsonSchema } from '../JsonSchema.ts';
 
-export type SchemaType = 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array';
+export type SchemaType = 'unspecified' | 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array';
+export type CompositionKeyword = 'allOf' | 'anyOf' | 'oneOf';
 
 export interface ContainerProps {
 	children: ReactNode;
@@ -42,6 +43,7 @@ export interface TypeSelectorOption {
 	type: SchemaType;
 	format?: string;
 	enum?: boolean;
+	composition?: CompositionKeyword;
 }
 
 export interface TypeSelectorProps {
@@ -60,6 +62,7 @@ export interface CheckboxProps {
 
 export interface RemoveButtonProps {
 	onClick: () => void;
+	label?: string;
 }
 
 export interface SettingsButtonProps {
@@ -73,6 +76,10 @@ export interface AddPropertyInputProps {
 	placeholder: string;
 	exposeTitle?: boolean;
 	exposeDescription?: boolean;
+}
+
+export interface AddOptionButtonProps {
+	onClick: () => void;
 }
 
 export interface SchemaTextSettingField {
@@ -133,8 +140,15 @@ export interface SchemaEditorLabels {
 	nullable: string;
 	removeProperty: string;
 	addProperty: string;
+	allOf: string;
+	anyOf: string;
+	oneOf: string;
+	option: string;
+	addOption: string;
+	removeOption: string;
 	rootElement: string;
 	arrayItem: string;
+	unspecifiedType: string;
 	minimum: string;
 	maximum: string;
 	exclusiveMinimum: string;
@@ -165,6 +179,7 @@ export interface SchemaEditorComponents {
 	TextareaFieldSetting: ComponentType<TextareaFieldSettingProps>;
 	RemoveButton: ComponentType<RemoveButtonProps>;
 	AddPropertyInput: ComponentType<AddPropertyInputProps>;
+	AddOptionButton: ComponentType<AddOptionButtonProps>;
 }
 
 export type SchemaProperty = JsonSchema | boolean;

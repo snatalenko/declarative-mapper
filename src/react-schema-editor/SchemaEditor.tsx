@@ -11,7 +11,17 @@ import { ComponentsContext } from './ComponentsContext.ts';
 import { LabelsContext } from './LabelsContext.ts';
 import { defaultComponents } from './defaultComponents.tsx';
 import { defaultLabels } from './defaultLabels.ts';
+import {
+	addCompositionBranch,
+	compositionKeywords,
+	getCompositionKeyword,
+	removeCompositionBranch,
+	selectComposition,
+	unwrapComposition,
+	updateCompositionBranch
+} from './composition.ts';
 import type {
+	CompositionKeyword,
 	JsonSchema,
 	SchemaCheckboxSettingField,
 	SchemaEditorComponents,
@@ -23,7 +33,7 @@ import type {
 	TypeSelectorOption
 } from './types.ts';
 
-const schemaTypes: SchemaType[] = ['string', 'number', 'integer', 'boolean', 'object', 'array'];
+const schemaTypes: SchemaType[] = ['unspecified', 'string', 'number', 'integer', 'boolean', 'object', 'array'];
 
 export interface SchemaEditorHandle {
 	readonly value: JsonSchema;
@@ -95,7 +105,7 @@ function schemaType(schema: JsonSchema): SchemaType {
 		return 'object';
 	if (schema.items)
 		return 'array';
-	return 'string';
+	return 'unspecified';
 }
 
 function isNullable(schema: JsonSchema): boolean {
@@ -104,17 +114,25 @@ function isNullable(schema: JsonSchema): boolean {
 
 function withNullable(schema: JsonSchema, nullable: boolean): JsonSchema {
 	const primary = schemaType(schema);
+	if (primary === 'unspecified')
+		return schema;
 	return { ...schema, type: nullable ? [primary, 'null'] : primary };
 }
 
 function withSchemaType(schema: JsonSchema, type: SchemaType): JsonSchema {
 	const nullable = isNullable(schema);
-	const next: JsonSchema = {
-		...schema,
-		type: nullable ? [type, 'null'] : type
-	};
+	const next: JsonSchema = { ...schema };
+	if (type === 'unspecified')
+		delete next.type;
+	else
+		next.type = nullable ? [type, 'null'] : type;
 
-	if (type === 'object') {
+	if (type === 'unspecified') {
+		delete next.properties;
+		delete next.items;
+		delete next.required;
+	}
+	else if (type === 'object') {
 		next.properties = next.properties ?? {};
 		delete next.items;
 	}
@@ -285,10 +303,14 @@ function settingsTextFields(
 
 function settingsCheckboxFields(
 	schema: JsonSchema,
+	type: SchemaType,
 	labels: SchemaEditorLabels,
 	onChange: (next: JsonSchema) => void,
 	readOnly: boolean
 ): SchemaCheckboxSettingField[] {
+	if (type === 'unspecified')
+		return [];
+
 	return [{
 		key: 'nullable',
 		label: labels.nullable,
@@ -336,7 +358,9 @@ function settingsTextareaFields(
 	return fields;
 }
 
-function labelForType(type: SchemaType): string {
+function labelForType(type: SchemaType, labels: SchemaEditorLabels): string {
+	if (type === 'unspecified')
+		return labels.unspecifiedType;
 	return type[0].toUpperCase() + type.slice(1);
 }
 
@@ -355,7 +379,7 @@ function typeSelectorOptions(
 ): TypeSelectorOption[] {
 	const options: TypeSelectorOption[] = schemaTypes.map(type => ({
 		value: type,
-		label: labelForType(type),
+		label: labelForType(type, labels),
 		type
 	}));
 	if (format) {
@@ -374,10 +398,23 @@ function typeSelectorOptions(
 			enum: true
 		});
 	}
+	options.push(...compositionKeywords.map(keyword => ({
+		value: keyword,
+		label: labels[keyword],
+		type: 'unspecified' as const,
+		composition: keyword
+	})));
 	return options;
 }
 
-function typeSelectorValue(type: SchemaType, format: string | undefined, enumOption: boolean): string {
+function typeSelectorValue(
+	type: SchemaType,
+	format: string | undefined,
+	enumOption: boolean,
+	composition: CompositionKeyword | undefined
+): string {
+	if (composition)
+		return composition;
 	if (type !== 'string')
 		return type;
 	if (enumOption)
@@ -402,6 +439,10 @@ function rootLabel(labels: SchemaEditorLabels): string {
 	return labels.rootElement;
 }
 
+function compositionBranchLabel(index: number, labels: SchemaEditorLabels): string {
+	return `${labels.option} ${index + 1}`;
+}
+
 function SchemaNodeEditor({
 	schema,
 	onChange,
@@ -410,9 +451,11 @@ function SchemaNodeEditor({
 	required,
 	onRequiredChange,
 	onRemove,
+	removeLabel,
 	root = false,
 	hideSelf = false,
 	arrayItem = false,
+	fixedLabel,
 	exposeTitle = false,
 	exposeDescription = false,
 	readOnly = false,
@@ -425,9 +468,11 @@ function SchemaNodeEditor({
 	required?: boolean;
 	onRequiredChange?: (next: boolean) => void;
 	onRemove?: () => void;
+	removeLabel?: string;
 	root?: boolean;
 	hideSelf?: boolean;
 	arrayItem?: boolean;
+	fixedLabel?: string;
 	exposeTitle?: boolean;
 	exposeDescription?: boolean;
 	readOnly?: boolean;
@@ -440,6 +485,7 @@ function SchemaNodeEditor({
 	const [preferBaseStringType, setPreferBaseStringType] = useState(false);
 	const [enumDraft, setEnumDraft] = useState<string | undefined>();
 	const nextPropertySlotIdRef = useRef(1);
+	const composition = getCompositionKeyword(schema);
 	const type = schemaType(schema);
 	const enumOption = type === 'string' && hasEnum(schema);
 	const enumValue = settingValue(schema, 'enum');
@@ -455,12 +501,18 @@ function SchemaNodeEditor({
 	}, [enumDraft, enumValue]);
 
 	const updateType = (option: TypeSelectorOption) => {
+		if (option.composition) {
+			onChange(selectComposition(schema, option.composition));
+			return;
+		}
+
 		const preferString = enumOption && option.value === 'string';
 		setPreferBaseStringType(preferString);
 		if (preferString && type === 'string' && !schema.format)
 			return;
 
-		const next = withSchemaType(schema, option.type);
+		const baseSchema = composition ? unwrapComposition(schema, composition) : schema;
+		const next = withSchemaType(baseSchema, option.type);
 		if (option.type === 'string' && option.format)
 			next.format = option.format;
 		else if (option.type !== 'string' || !option.enum)
@@ -570,8 +622,8 @@ function SchemaNodeEditor({
 		});
 	};
 
-	const baseNameControl = root || arrayItem ? (
-		<C.FieldLabel label={root ? rootLabel(labels) : labels.arrayItem} />
+	const baseNameControl = root || arrayItem || fixedLabel !== undefined ? (
+		<C.FieldLabel label={root ? rootLabel(labels) : arrayItem ? labels.arrayItem : fixedLabel ?? ''} />
 	) : (
 		<C.TextInput
 			value={name ?? ''}
@@ -603,7 +655,7 @@ function SchemaNodeEditor({
 	);
 	const properties = schema.properties ?? {};
 
-	const nestedContent = type === 'object' ? (
+	const structuralContent = type === 'object' ? (
 		<>
 			{Object.entries(properties).filter(([propertyName]) => !slotNames.has(propertyName)).map(([propertyName, propertySchema]) => (
 				<SchemaNodeEditor
@@ -670,6 +722,44 @@ function SchemaNodeEditor({
 			/>
 		</>
 	) : null;
+	const definedCompositions = compositionKeywords.filter(keyword => !!schema[keyword]?.length);
+	const compositionContent = definedCompositions.map(keyword => {
+		const branches = schema[keyword];
+		if (!branches)
+			return null;
+
+		return (
+			<div key={keyword} className="dm-schema-editor-composition">
+				{definedCompositions.length > 1 ? <C.FieldLabel label={labels[keyword]} /> : null}
+				{branches.map((branch, index) => {
+					const branchSchema = asSchema(branch);
+					return (
+						<SchemaNodeEditor
+							key={index}
+							schema={branchSchema}
+							onChange={next => onChange(updateCompositionBranch(schema, keyword, index, next))}
+							onRemove={() => onChange(removeCompositionBranch(schema, keyword, index))}
+							removeLabel={labels.removeOption}
+							fixedLabel={branchSchema.title?.trim() || compositionBranchLabel(index, labels)}
+							exposeTitle={exposeTitle}
+							exposeDescription={exposeDescription}
+							readOnly={readOnly}
+						/>
+					);
+				})}
+				{readOnly ? null : (
+					<C.AddOptionButton onClick={() => onChange(addCompositionBranch(schema, keyword))} />
+				)}
+			</div>
+		);
+	});
+	const hasComposition = compositionContent.some(content => content !== null);
+	const nestedContent = structuralContent || hasComposition ? (
+		<>
+			{structuralContent}
+			{compositionContent}
+		</>
+	) : null;
 	const nestedSection = nestedContent ? <C.Section>{nestedContent}</C.Section> : null;
 
 	const section = settingsOpen || nestedSection ? (
@@ -697,7 +787,7 @@ function SchemaNodeEditor({
 							return (
 								<>
 									{textFields.slice(0, 2).map(f => <C.TextFieldSetting key={f.key} field={f} />)}
-									{settingsCheckboxFields(schema, labels, onChange, readOnly).map(f => <C.CheckboxFieldSetting key={f.key} field={f} />)}
+									{settingsCheckboxFields(schema, type, labels, onChange, readOnly).map(f => <C.CheckboxFieldSetting key={f.key} field={f} />)}
 									{textFields.slice(2).map(f => <C.TextFieldSetting key={f.key} field={f} />)}
 									{textareaFields.map(f => <C.TextareaFieldSetting key={f.key} field={f} />)}
 								</>
@@ -723,7 +813,7 @@ function SchemaNodeEditor({
 					value={
 						preferBaseStringType && enumOption
 							? 'string'
-							: typeSelectorValue(type, schema.format, enumOption)
+							: typeSelectorValue(type, schema.format, enumOption, composition)
 					}
 					options={typeSelectorOptions(schema.format, enumOption, labels)}
 					onChange={updateType}
@@ -746,7 +836,9 @@ function SchemaNodeEditor({
 					onClick={() => setSettingsOpen(open => !open)}
 				/>
 			)}
-			remove={root || arrayItem || !onRemove || readOnly ? null : <C.RemoveButton onClick={onRemove} />}
+			remove={root || arrayItem || !onRemove || readOnly ? null : (
+				<C.RemoveButton onClick={onRemove} label={removeLabel} />
+			)}
 			section={section}
 		/>
 	);

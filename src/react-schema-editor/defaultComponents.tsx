@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, type ComponentType } from 'react';
 import { LabelsContext } from './LabelsContext.ts';
 import type {
 	AddPropertyInputProps,
+	AddOptionButtonProps,
 	CheckboxFieldSettingProps,
 	CheckboxProps,
 	ContainerProps,
@@ -177,14 +178,14 @@ export const DefaultTextareaFieldSetting: ComponentType<TextareaFieldSettingProp
 	</label>
 );
 
-export const DefaultRemoveButton: ComponentType<RemoveButtonProps> = ({ onClick }) => {
+export const DefaultRemoveButton: ComponentType<RemoveButtonProps> = ({ onClick, label }) => {
 	const labels = useContext(LabelsContext);
 	return (
 		<button
 			type="button"
 			className="dm-schema-editor-remove"
 			onClick={onClick}
-			aria-label={labels.removeProperty}
+			aria-label={label ?? labels.removeProperty}
 		>
 			×
 		</button>
@@ -202,6 +203,15 @@ export const DefaultAddPropertyInput: ComponentType<AddPropertyInputProps> = ({ 
 	</div>
 );
 
+export const DefaultAddOptionButton: ComponentType<AddOptionButtonProps> = ({ onClick }) => {
+	const labels = useContext(LabelsContext);
+	return (
+		<button type="button" className="dm-schema-editor-add-option" onClick={onClick}>
+			{labels.addOption}
+		</button>
+	);
+};
+
 export const defaultComponents: SchemaEditorComponents = {
 	Container: DefaultContainer,
 	Row: DefaultRow,
@@ -216,5 +226,6 @@ export const defaultComponents: SchemaEditorComponents = {
 	CheckboxFieldSetting: DefaultCheckboxFieldSetting,
 	TextareaFieldSetting: DefaultTextareaFieldSetting,
 	RemoveButton: DefaultRemoveButton,
-	AddPropertyInput: DefaultAddPropertyInput
+	AddPropertyInput: DefaultAddPropertyInput,
+	AddOptionButton: DefaultAddOptionButton
 };

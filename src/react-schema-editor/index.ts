@@ -5,8 +5,10 @@ export { defaultLabels } from './defaultLabels.ts';
 export { LabelsContext } from './LabelsContext.ts';
 export type {
 	AddPropertyInputProps,
+	AddOptionButtonProps,
 	CheckboxFieldSettingProps,
 	CheckboxProps,
+	CompositionKeyword,
 	ContainerProps,
 	FieldLabelProps,
 	JsonSchema,

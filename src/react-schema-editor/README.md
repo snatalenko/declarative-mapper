@@ -145,12 +145,32 @@ The editor supports:
 - object properties and required flags;
 - strings, numbers, integers, booleans, objects, and arrays;
 - nested objects and array item schemas;
+- recursive `allOf`, `anyOf`, and `oneOf` composition;
 - nullable fields, titles, descriptions, formats, enums, and examples;
 - numeric, string, array, and object constraints exposed by the selected field type;
 - controlled, uncontrolled, read-only, and root-hidden rendering.
 
 String formats and enums appear as recognizable options in the type selector. Enum and example values use one value
 per line in their default textarea editors.
+
+### Composed Schemas
+
+Choose **All of**, **Any of**, or **One of** from a field's type selector. The field's current schema becomes the first
+option, preserving its properties and constraints. Use **Add option** below the options to add more branches.
+
+Each option uses the same recursive schema editor, so it can contain properties, arrays, settings, and further
+composition. Types and constraints are defined within the options:
+
+```json
+{
+	"oneOf": [
+		{ "title": "Person", "type": "object", "properties": { "name": { "type": "string" } } },
+		{ "title": "Company", "type": "object", "properties": { "registration": { "type": "string" } } }
+	]
+}
+```
+
+Schemas without an explicit `type` appear as **Unspecified** rather than being assigned a type by the editor.
 
 ## API
 
@@ -180,7 +200,7 @@ per line in their default textarea editors.
 | `labels` | `Partial<SchemaEditorLabels>` | Replaces any user-visible label. |
 
 Use `hideRootElement` when the surrounding page already represents the root context. The root schema still comes from
-`value` or `defaultValue`, including its `type`, `properties`, and `items`.
+`value` or `defaultValue`, including its type, properties, array items, and composition branches.
 
 The component exposes this ref handle:
 
@@ -199,15 +219,16 @@ interface SchemaEditorHandle {
 | `Section` | Places nested object properties or an array item editor. |
 | `TextInput` | Edits property names and exposed text values. |
 | `FieldLabel` | Renders read-only labels such as the root or array item name. |
-| `TypeSelector` | Selects the schema type, format, or enum presentation. |
+| `TypeSelector` | Selects the schema type, format, enum presentation, or composition mode. |
 | `RequirementControl` | Changes whether an object property is required. |
 | `SettingsButton` | Opens or closes field settings. |
 | `SettingsGroup` | Places the expanded settings area. |
 | `TextFieldSetting` | Edits text and numeric constraints. |
 | `CheckboxFieldSetting` | Edits boolean settings such as nullable. |
 | `TextareaFieldSetting` | Edits multi-line enum and example values. |
-| `RemoveButton` | Removes a property. |
+| `RemoveButton` | Removes a property or composition branch. |
 | `AddPropertyInput` | Creates a property at the current object level. |
+| `AddOptionButton` | Adds another branch to an `allOf`, `anyOf`, or `oneOf` schema. |
 
 Override `SettingsGroup` to move field settings into a custom panel or popover. Override `Section` to change how nested
 schemas are navigated. Override `Row` when the complete field layout belongs to your design system.
