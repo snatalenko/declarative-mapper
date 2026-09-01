@@ -37,7 +37,7 @@ export const Row: ComponentType<RowProps> = ({
 	const nameClass = title && description ? 'col-2' : hasDetails ? 'col-3' : 'col-4';
 	return (
 		<div className="row g-2 mb-2 align-items-start">
-			<div className={nameClass}>{name}</div>
+			<div className={`${nameClass} dm-schema-editor-name`}>{name}</div>
 			<div className={hasDetails ? 'col-2' : 'col-3'}>{typeSelector}</div>
 			<div className={hasDetails ? 'col-2' : 'col-3'}>{requiredToggle}</div>
 			{title ? <div className={detailClass}>{title}</div> : null}
@@ -198,7 +198,7 @@ export const AddPropertyInput: ComponentType<AddPropertyInputProps> = ({
 	const nameClass = exposeTitle && exposeDescription ? 'col-2' : exposeTitle || exposeDescription ? 'col-3' : 'col-4';
 	return (
 		<div className="row g-2 mb-2 dm-schema-editor-template-row">
-			<div className={nameClass}>
+			<div className={`${nameClass} dm-schema-editor-name`}>
 				<input
 					type="text"
 					className="form-control"

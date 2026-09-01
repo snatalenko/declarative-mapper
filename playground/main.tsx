@@ -42,6 +42,7 @@ import type { JSONSchema4 } from 'json-schema';
 type EditorType = 'default' | 'bs34' | 'bs53' | 'json';
 type SourceTab = 'schema' | 'data';
 type DestinationTab = 'schema' | 'result';
+type ExpandedPanel = 'source' | 'mapping' | 'destination';
 type AiProvider = 'openai' | 'anthropic';
 type AiReasoningEffort = '' | 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 
@@ -290,6 +291,15 @@ function JsonTextarea({
 const labelStyle = { fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem', display: 'block' } as const;
 const errStyle = { color: '#c00', fontSize: '0.8rem', marginTop: '0.25rem' } as const;
 const sectionStyle = { display: 'flex', flexDirection: 'column' as const, gap: '0.5rem', minWidth: 0 };
+const expandedSectionStyle = {
+	...sectionStyle,
+	position: 'fixed',
+	inset: 0,
+	zIndex: 1000,
+	padding: '1rem 1.5rem',
+	background: '#f8fafc',
+	overflow: 'auto'
+} as const;
 const editorPanelStyle = {
 	border: '1px solid #e3e7ec',
 	borderRadius: 4,
@@ -342,7 +352,7 @@ function tabStyle(active: boolean) {
 function App() {
 	const [sourceTab, setSourceTab] = useState<SourceTab>('schema');
 	const [destinationTab, setDestinationTab] = useState<DestinationTab>('schema');
-	const [editorExpanded, setEditorExpanded] = useState(false);
+	const [expandedPanel, setExpandedPanel] = useState<ExpandedPanel | null>(null);
 	const [aiPanelVisible, setAiPanelVisible] = useState(false);
 
 	const [sourceText, setSourceText] = useState(JSON.stringify(sampleSource, null, 2));
@@ -397,6 +407,9 @@ function App() {
 	const apiKeyProviderLabel = aiProvider === 'openai' ? 'OpenAI' : 'Anthropic';
 	const apiKeyPlaceholder = aiProvider === 'openai' ? 'sk-...' : 'sk-ant-api...';
 	const aiModels = cachedAiModels[aiProvider] ?? [];
+	const sourceExpanded = expandedPanel === 'source';
+	const mappingExpanded = expandedPanel === 'mapping';
+	const destinationExpanded = expandedPanel === 'destination';
 
 	const handleEditorChange = (next: RootMapping) => {
 		userModifiedRef.current = true;
@@ -419,11 +432,11 @@ function App() {
 	}, [editorType]);
 
 	useEffect(() => {
-		document.body.style.overflow = editorExpanded ? 'hidden' : '';
+		document.body.style.overflow = expandedPanel ? 'hidden' : '';
 		return () => {
 			document.body.style.overflow = '';
 		};
-	}, [editorExpanded]);
+	}, [expandedPanel]);
 
 	const updateSchemaText = (
 		text: string,
@@ -841,20 +854,53 @@ function App() {
 			<div style={{
 				display: 'grid',
 				gridTemplateColumns: 'minmax(280px, 1fr) minmax(440px, 2fr) minmax(280px, 1fr)',
+				gridTemplateAreas: '"destination mapping source"',
 				gap: '1rem',
 				alignItems: 'start'
 			}}>
 				{/* Source */}
-				{!editorExpanded && <section style={sectionStyle}>
+				{(!expandedPanel || sourceExpanded) && <section style={{
+					...(sourceExpanded ? expandedSectionStyle : sectionStyle),
+					gridArea: 'source'
+				}}>
 					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 						<h2 style={{ margin: 0, fontSize: '1rem' }}>Source</h2>
 						<div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-							<button type="button" style={tabStyle(sourceTab === 'schema')} onClick={() => setSourceTab('schema')}>
+							<button
+								type="button"
+								style={{
+									...tabStyle(sourceTab === 'schema'),
+									...(sourceExpanded ? disabledToolbarButtonStyle : {})
+								}}
+								disabled={sourceExpanded}
+								onClick={() => setSourceTab('schema')}
+							>
 								Schema
 							</button>
-							<button type="button" style={tabStyle(sourceTab === 'data')} onClick={() => setSourceTab('data')}>
+							<button
+								type="button"
+								style={{
+									...tabStyle(sourceTab === 'data'),
+									...(sourceExpanded ? disabledToolbarButtonStyle : {})
+								}}
+								disabled={sourceExpanded}
+								onClick={() => {
+									setSourceTab('data');
+									if (sourceExpanded)
+										setExpandedPanel(null);
+								}}
+							>
 								Data
 							</button>
+							{sourceTab === 'schema' && (
+								<button
+									type="button"
+									style={secondaryButtonStyle}
+									onClick={() => setExpandedPanel(sourceExpanded ? null : 'source')}
+								>
+									{sourceExpanded ? 'Exit full screen' : 'Full screen'}
+								</button>
+							)}
 						</div>
 					</div>
 					{sourceTab === 'schema' ? (
@@ -886,7 +932,8 @@ function App() {
 										() => setSourceSchemaSelection('')
 									)}
 									placeholder='{ "type": "object", "properties": { ... } }'
-									sizeKey={`${editorType}-${sourceTab}`}
+									minRows={sourceExpanded ? 30 : 5}
+									sizeKey={`${editorType}-${sourceTab}-${sourceExpanded ? 'expanded' : 'normal'}`}
 									toolbarActions={
 										<button
 											type="button"
@@ -910,11 +957,15 @@ function App() {
 									title="JsonSchema"
 								/>
 							) : (
-								<div style={editorPanelStyle}>
+								<div style={{
+									...editorPanelStyle,
+									minHeight: sourceExpanded ? 'calc(100vh - 7.5rem)' : undefined
+								}}>
 									<SchemaEditor
 										value={sourceSchema ?? emptySchema}
 										onChange={updateSourceSchemaFromEditor}
 										components={schemaComponents}
+										exposeDescription={sourceExpanded}
 									/>
 								</div>
 							)}
@@ -943,15 +994,12 @@ function App() {
 				</section>}
 
 				{/* Mapping */}
-				<section style={editorExpanded ? {
-					...sectionStyle,
-					position: 'fixed',
-					inset: 0,
-					zIndex: 1000,
-					padding: '1rem 1.5rem',
-					background: '#f8fafc',
-					overflow: 'auto'
-				} : sectionStyle}>
+				{(!expandedPanel || mappingExpanded) && <section
+					style={{
+						...(mappingExpanded ? expandedSectionStyle : sectionStyle),
+						gridArea: 'mapping'
+					}}
+				>
 					<div style={{
 						display: 'flex',
 						alignItems: 'flex-start',
@@ -969,9 +1017,9 @@ function App() {
 								type="button"
 								style={{
 									...tabStyle(aiPanelVisible),
-									...(editorExpanded ? disabledToolbarButtonStyle : {})
+									...(mappingExpanded ? disabledToolbarButtonStyle : {})
 								}}
-								disabled={editorExpanded}
+								disabled={mappingExpanded}
 								onClick={() => setAiPanelVisible(v => !v)}
 							>
 								Generate with AI
@@ -981,14 +1029,18 @@ function App() {
 								onClick={runMapping}
 								style={{
 									...secondaryButtonStyle,
-									...(editorExpanded ? disabledToolbarButtonStyle : {})
+									...(mappingExpanded ? disabledToolbarButtonStyle : {})
 								}}
-								disabled={editorExpanded}
+								disabled={mappingExpanded}
 							>
 								Run
 							</button>
-							<button type="button" style={secondaryButtonStyle} onClick={() => setEditorExpanded(v => !v)}>
-								{editorExpanded ? 'Exit full screen' : 'Full screen'}
+							<button
+								type="button"
+								style={secondaryButtonStyle}
+								onClick={() => setExpandedPanel(mappingExpanded ? null : 'mapping')}
+							>
+								{mappingExpanded ? 'Exit full screen' : 'Full screen'}
 							</button>
 						</div>
 					</div>
@@ -996,7 +1048,7 @@ function App() {
 					<div style={{
 						order: 2,
 						...(editorType === 'json' ? {} : editorPanelStyle),
-						minHeight: editorExpanded ? 'calc(100vh - 6.5rem)' : 200,
+						minHeight: mappingExpanded ? 'calc(100vh - 6.5rem)' : 200,
 						overflow: 'auto'
 					}}>
 						{editorType === 'json' ? (
@@ -1004,8 +1056,8 @@ function App() {
 								value={mappingText}
 								onChange={updateMappingText}
 								placeholder='{ "field": "EXPRESSION" }'
-								minRows={editorExpanded ? 30 : 5}
-								sizeKey={`${editorType}-${editorExpanded ? 'expanded' : 'normal'}`}
+								minRows={mappingExpanded ? 30 : 5}
+								sizeKey={`${editorType}-${mappingExpanded ? 'expanded' : 'normal'}`}
 							/>
 						) : (
 							<MappingEditor
@@ -1021,7 +1073,7 @@ function App() {
 						{mappingError && <div style={errStyle}>{mappingError}</div>}
 					</div>
 
-					{!editorExpanded && aiPanelVisible && (
+					{!mappingExpanded && aiPanelVisible && (
 						<div style={{
 							order: 1,
 							marginTop: '0.5rem',
@@ -1276,27 +1328,52 @@ function App() {
 							{aiError && <div style={errStyle}>{aiError}</div>}
 						</div>
 					)}
-				</section>
+				</section>}
 
 				{/* Destination */}
-				{!editorExpanded && <section style={sectionStyle}>
+				{(!expandedPanel || destinationExpanded) && (
+					<section style={{
+						...(destinationExpanded ? expandedSectionStyle : sectionStyle),
+						gridArea: 'destination'
+					}}>
 					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 						<h2 style={{ margin: 0, fontSize: '1rem' }}>Destination</h2>
 						<div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
 							<button
 								type="button"
-								style={tabStyle(destinationTab === 'schema')}
+								style={{
+									...tabStyle(destinationTab === 'schema'),
+									...(destinationExpanded ? disabledToolbarButtonStyle : {})
+								}}
+								disabled={destinationExpanded}
 								onClick={() => setDestinationTab('schema')}
 							>
 								Schema
 							</button>
 							<button
 								type="button"
-								style={tabStyle(destinationTab === 'result')}
-								onClick={() => setDestinationTab('result')}
+								style={{
+									...tabStyle(destinationTab === 'result'),
+									...(destinationExpanded ? disabledToolbarButtonStyle : {})
+								}}
+								disabled={destinationExpanded}
+								onClick={() => {
+									setDestinationTab('result');
+									if (destinationExpanded)
+										setExpandedPanel(null);
+								}}
 							>
 								Result
 							</button>
+							{destinationTab === 'schema' && (
+								<button
+									type="button"
+									style={secondaryButtonStyle}
+									onClick={() => setExpandedPanel(destinationExpanded ? null : 'destination')}
+								>
+									{destinationExpanded ? 'Exit full screen' : 'Full screen'}
+								</button>
+							)}
 						</div>
 					</div>
 					{destinationTab === 'schema' ? (
@@ -1328,7 +1405,8 @@ function App() {
 										() => setDestSchemaSelection('')
 									)}
 									placeholder='{ "type": "object", "properties": { ... } }'
-									sizeKey={`${editorType}-${destinationTab}`}
+									minRows={destinationExpanded ? 30 : 5}
+									sizeKey={`${editorType}-${destinationTab}-${destinationExpanded ? 'expanded' : 'normal'}`}
 									toolbarActions={
 										<button
 											type="button"
@@ -1352,11 +1430,15 @@ function App() {
 									title="JsonSchema"
 								/>
 							) : (
-								<div style={editorPanelStyle}>
+								<div style={{
+									...editorPanelStyle,
+									minHeight: destinationExpanded ? 'calc(100vh - 7.5rem)' : undefined
+								}}>
 									<SchemaEditor
 										value={destSchema ?? emptySchema}
 										onChange={updateDestSchemaFromEditor}
 										components={schemaComponents}
+										exposeDescription={destinationExpanded}
 									/>
 								</div>
 							)}
@@ -1373,7 +1455,8 @@ function App() {
 							{runError && <div style={errStyle}>{runError}</div>}
 						</>
 					)}
-				</section>}
+					</section>
+				)}
 			</div>
 		</div>
 	);
