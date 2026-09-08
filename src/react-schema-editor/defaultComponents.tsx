@@ -7,6 +7,7 @@ import type {
 	CheckboxProps,
 	ContainerProps,
 	FieldLabelProps,
+	MultipleTypeSelectorProps,
 	RemoveButtonProps,
 	RowProps,
 	SchemaEditorComponents,
@@ -103,6 +104,30 @@ export const DefaultTypeSelector: ComponentType<TypeSelectorProps> = ({ value, o
 			<option key={option.value} value={option.value}>{option.label}</option>
 		))}
 	</select>
+);
+
+export const DefaultMultipleTypeSelector: ComponentType<MultipleTypeSelectorProps> = ({
+	label,
+	options,
+	onChange,
+	readOnly
+}) => (
+	<div className="dm-schema-editor-row dm-schema-editor-types">
+		<span className="dm-schema-editor-label">{label}</span>
+		<div className="dm-schema-editor-types-options" role="group" aria-label={label}>
+			{options.map(option => (
+				<label key={option.value}>
+					<input
+						type="checkbox"
+						checked={option.checked}
+						onChange={event => onChange(option.value, event.target.checked)}
+						disabled={readOnly}
+					/>
+					<span>{option.label}</span>
+				</label>
+			))}
+		</div>
+	</div>
 );
 
 export const DefaultCheckbox: ComponentType<CheckboxProps> = ({ checked, onChange, label, readOnly }) => (
@@ -219,6 +244,7 @@ export const defaultComponents: SchemaEditorComponents = {
 	TextInput: DefaultTextInput,
 	FieldLabel: DefaultFieldLabel,
 	TypeSelector: DefaultTypeSelector,
+	MultipleTypeSelector: DefaultMultipleTypeSelector,
 	RequirementControl: DefaultCheckbox,
 	SettingsButton: DefaultSettingsButton,
 	SettingsGroup: DefaultSettingsGroup,

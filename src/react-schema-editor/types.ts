@@ -43,6 +43,7 @@ export interface TypeSelectorOption {
 	type: SchemaType;
 	format?: string;
 	enum?: boolean;
+	multiple?: boolean;
 	composition?: CompositionKeyword;
 }
 
@@ -50,6 +51,19 @@ export interface TypeSelectorProps {
 	value: string;
 	options: TypeSelectorOption[];
 	onChange: (next: TypeSelectorOption) => void;
+	readOnly?: boolean;
+}
+
+export interface MultipleTypeSelectorOption {
+	value: string;
+	label: string;
+	checked: boolean;
+}
+
+export interface MultipleTypeSelectorProps {
+	label: string;
+	options: MultipleTypeSelectorOption[];
+	onChange: (value: string, checked: boolean) => void;
 	readOnly?: boolean;
 }
 
@@ -149,6 +163,8 @@ export interface SchemaEditorLabels {
 	rootElement: string;
 	arrayItem: string;
 	unspecifiedType: string;
+	multipleTypes: string;
+	types: string;
 	minimum: string;
 	maximum: string;
 	exclusiveMinimum: string;
@@ -171,6 +187,7 @@ export interface SchemaEditorComponents {
 	TextInput: ComponentType<TextInputProps>;
 	FieldLabel: ComponentType<FieldLabelProps>;
 	TypeSelector: ComponentType<TypeSelectorProps>;
+	MultipleTypeSelector: ComponentType<MultipleTypeSelectorProps>;
 	RequirementControl: ComponentType<CheckboxProps>;
 	SettingsButton: ComponentType<SettingsButtonProps>;
 	SettingsGroup: ComponentType<SettingsGroupProps>;

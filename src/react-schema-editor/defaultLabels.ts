@@ -20,6 +20,8 @@ export const defaultLabels: SchemaEditorLabels = {
 	rootElement: 'Root Element',
 	arrayItem: 'Array Item',
 	unspecifiedType: 'Unspecified',
+	multipleTypes: 'Multiple types',
+	types: 'Types',
 	minimum: 'Minimum',
 	maximum: 'Maximum',
 	exclusiveMinimum: 'Exclusive minimum',

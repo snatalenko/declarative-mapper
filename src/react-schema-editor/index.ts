@@ -12,6 +12,8 @@ export type {
 	ContainerProps,
 	FieldLabelProps,
 	JsonSchema,
+	MultipleTypeSelectorOption,
+	MultipleTypeSelectorProps,
 	RemoveButtonProps,
 	RowProps,
 	SchemaEditorComponents,

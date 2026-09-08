@@ -7,6 +7,7 @@ import type {
 	CheckboxProps,
 	ContainerProps,
 	FieldLabelProps,
+	MultipleTypeSelectorProps,
 	RemoveButtonProps,
 	RowProps,
 	SchemaEditorComponents,
@@ -97,6 +98,35 @@ export const TypeSelector: ComponentType<TypeSelectorProps> = ({ value, options,
 			<option key={option.value} value={option.value}>{option.label}</option>
 		))}
 	</select>
+);
+
+export const MultipleTypeSelector: ComponentType<MultipleTypeSelectorProps> = ({
+	label,
+	options,
+	onChange,
+	readOnly
+}) => (
+	<div className="row g-2 mb-2 align-items-start dm-schema-editor-types">
+		<label className="col-5 col-form-label">{label}</label>
+		<div
+			className="col-7 d-flex flex-wrap gap-3 dm-schema-editor-types-options"
+			role="group"
+			aria-label={label}
+		>
+			{options.map(option => (
+				<label className="form-check form-check-inline mb-0" key={option.value}>
+					<input
+						type="checkbox"
+						className="form-check-input"
+						checked={option.checked}
+						onChange={event => onChange(option.value, event.target.checked)}
+						disabled={readOnly}
+					/>
+					<span className="form-check-label">{option.label}</span>
+				</label>
+			))}
+		</div>
+	</div>
 );
 
 export const RequirementControl: ComponentType<CheckboxProps> = ({ checked, onChange, label, readOnly }) => (
@@ -230,6 +260,7 @@ const components: Partial<SchemaEditorComponents> = {
 	TextInput,
 	FieldLabel,
 	TypeSelector,
+	MultipleTypeSelector,
 	RequirementControl,
 	SettingsButton,
 	SettingsGroup,

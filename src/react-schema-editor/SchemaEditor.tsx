@@ -20,6 +20,14 @@ import {
 	unwrapComposition,
 	updateCompositionBranch
 } from './composition.ts';
+import {
+	hasMultipleSchemaTypes,
+	isJsonSchemaType,
+	jsonSchemaTypes,
+	schemaTypes,
+	withSchemaTypes,
+	type JsonSchemaType
+} from './multipleTypes.ts';
 import type {
 	CompositionKeyword,
 	JsonSchema,
@@ -33,7 +41,7 @@ import type {
 	TypeSelectorOption
 } from './types.ts';
 
-const schemaTypes: SchemaType[] = ['unspecified', 'string', 'number', 'integer', 'boolean', 'object', 'array'];
+const selectableSchemaTypes: SchemaType[] = ['unspecified', 'string', 'number', 'integer', 'boolean', 'object', 'array'];
 
 export interface SchemaEditorHandle {
 	readonly value: JsonSchema;
@@ -180,11 +188,25 @@ function settingsForType(type: SchemaType): SchemaSettingKey[] {
 	return ['title', 'description'];
 }
 
+function settingsForTypes(types: SchemaType[]): SchemaSettingKey[] {
+	const keys = new Set<SchemaSettingKey>();
+	for (const type of types)
+		settingsForType(type).forEach(key => keys.add(key));
+	return Array.from(keys);
+}
+
 function textareaSettingsForType(type: SchemaType): SchemaSettingKey[] {
 	if (type === 'object' || type === 'array')
 		return [];
 
 	return ['enum'];
+}
+
+function textareaSettingsForTypes(types: SchemaType[]): SchemaSettingKey[] {
+	const keys = new Set<SchemaSettingKey>();
+	for (const type of types)
+		textareaSettingsForType(type).forEach(key => keys.add(key));
+	return Array.from(keys);
 }
 
 function settingValue(schema: JsonSchema, key: SchemaSettingKey): string {
@@ -287,12 +309,12 @@ function updateExamples(schema: JsonSchema, value: string): JsonSchema {
 
 function settingsTextFields(
 	schema: JsonSchema,
-	type: SchemaType,
+	types: SchemaType[],
 	labels: SchemaEditorLabels,
 	onChange: (next: JsonSchema) => void,
 	readOnly: boolean
 ): SchemaTextSettingField[] {
-	return settingsForType(type).map(key => ({
+	return settingsForTypes(types).map(key => ({
 		key,
 		label: labels[key],
 		value: settingValue(schema, key),
@@ -304,11 +326,12 @@ function settingsTextFields(
 function settingsCheckboxFields(
 	schema: JsonSchema,
 	type: SchemaType,
+	multipleTypes: boolean,
 	labels: SchemaEditorLabels,
 	onChange: (next: JsonSchema) => void,
 	readOnly: boolean
 ): SchemaCheckboxSettingField[] {
-	if (type === 'unspecified')
+	if (type === 'unspecified' || multipleTypes)
 		return [];
 
 	return [{
@@ -323,14 +346,14 @@ function settingsCheckboxFields(
 
 function settingsTextareaFields(
 	schema: JsonSchema,
-	type: SchemaType,
+	types: SchemaType[],
 	labels: SchemaEditorLabels,
 	onChange: (next: JsonSchema) => void,
 	readOnly: boolean,
 	enumDraft: string | undefined,
 	onEnumDraftChange: (next: string) => void
 ): SchemaTextareaSettingField[] {
-	const fields: SchemaTextareaSettingField[] = textareaSettingsForType(type).map(key => ({
+	const fields: SchemaTextareaSettingField[] = textareaSettingsForTypes(types).map(key => ({
 		key,
 		label: labels[key],
 		type: 'textarea',
@@ -364,6 +387,10 @@ function labelForType(type: SchemaType, labels: SchemaEditorLabels): string {
 	return type[0].toUpperCase() + type.slice(1);
 }
 
+function labelForJsonSchemaType(type: JsonSchemaType, labels: SchemaEditorLabels): string {
+	return type === 'null' ? labels.nullable : labelForType(type, labels);
+}
+
 function labelForFormat(format: string): string {
 	return format[0].toUpperCase() + format.slice(1);
 }
@@ -377,7 +404,7 @@ function typeSelectorOptions(
 	enumOption: boolean,
 	labels: SchemaEditorLabels
 ): TypeSelectorOption[] {
-	const options: TypeSelectorOption[] = schemaTypes.map(type => ({
+	const options: TypeSelectorOption[] = selectableSchemaTypes.map(type => ({
 		value: type,
 		label: labelForType(type, labels),
 		type
@@ -398,6 +425,12 @@ function typeSelectorOptions(
 			enum: true
 		});
 	}
+	options.push({
+		value: 'multiple',
+		label: labels.multipleTypes,
+		type: 'unspecified',
+		multiple: true
+	});
 	options.push(...compositionKeywords.map(keyword => ({
 		value: keyword,
 		label: labels[keyword],
@@ -411,10 +444,13 @@ function typeSelectorValue(
 	type: SchemaType,
 	format: string | undefined,
 	enumOption: boolean,
+	multipleTypes: boolean,
 	composition: CompositionKeyword | undefined
 ): string {
 	if (composition)
 		return composition;
+	if (multipleTypes)
+		return 'multiple';
 	if (type !== 'string')
 		return type;
 	if (enumOption)
@@ -483,10 +519,18 @@ function SchemaNodeEditor({
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const [propertySlots, setPropertySlots] = useState<PropertySlot[]>(() => [{ id: 0, value: '' }]);
 	const [preferBaseStringType, setPreferBaseStringType] = useState(false);
+	const [editingMultipleTypes, setEditingMultipleTypes] = useState(() => hasMultipleSchemaTypes(schema));
 	const [enumDraft, setEnumDraft] = useState<string | undefined>();
 	const nextPropertySlotIdRef = useRef(1);
+	const retainMultipleTypesRef = useRef(false);
 	const composition = getCompositionKeyword(schema);
 	const type = schemaType(schema);
+	const selectedTypes = schemaTypes(schema);
+	const multipleTypes = editingMultipleTypes || hasMultipleSchemaTypes(schema);
+	const selectedSettingTypes: SchemaType[] = multipleTypes
+		? selectedTypes.filter(current => current !== 'null')
+		: [type];
+	const settingTypes: SchemaType[] = selectedSettingTypes.length ? selectedSettingTypes : ['unspecified'];
 	const enumOption = type === 'string' && hasEnum(schema);
 	const enumValue = settingValue(schema, 'enum');
 
@@ -500,12 +544,32 @@ function SchemaNodeEditor({
 			setEnumDraft(undefined);
 	}, [enumDraft, enumValue]);
 
+	useEffect(() => {
+		if (hasMultipleSchemaTypes(schema)) {
+			retainMultipleTypesRef.current = false;
+			setEditingMultipleTypes(true);
+		}
+		else if (retainMultipleTypesRef.current) {
+			retainMultipleTypesRef.current = false;
+		}
+		else
+			setEditingMultipleTypes(false);
+	}, [schema.type]);
+
 	const updateType = (option: TypeSelectorOption) => {
 		if (option.composition) {
+			setEditingMultipleTypes(false);
 			onChange(selectComposition(schema, option.composition));
 			return;
 		}
+		if (option.multiple) {
+			setEditingMultipleTypes(true);
+			if (composition)
+				onChange(unwrapComposition(schema, composition));
+			return;
+		}
 
+		setEditingMultipleTypes(false);
 		const preferString = enumOption && option.value === 'string';
 		setPreferBaseStringType(preferString);
 		if (preferString && type === 'string' && !schema.format)
@@ -531,7 +595,7 @@ function SchemaNodeEditor({
 
 		onChange({
 			...schema,
-			type: 'object',
+			type: schema.type ?? 'object',
 			properties: {
 				...properties,
 				[propertyName]: { type: 'string' }
@@ -617,7 +681,7 @@ function SchemaNodeEditor({
 	const updateArrayItems = (items: JsonSchema) => {
 		onChange({
 			...schema,
-			type: 'array',
+			type: schema.type ?? 'array',
 			items
 		});
 	};
@@ -655,7 +719,7 @@ function SchemaNodeEditor({
 	);
 	const properties = schema.properties ?? {};
 
-	const structuralContent = type === 'object' ? (
+	const objectContent = (multipleTypes ? selectedTypes.includes('object') : type === 'object') ? (
 		<>
 			{Object.entries(properties).filter(([propertyName]) => !slotNames.has(propertyName)).map(([propertyName, propertySchema]) => (
 				<SchemaNodeEditor
@@ -710,7 +774,8 @@ function SchemaNodeEditor({
 				/>
 			))}
 		</>
-	) : type === 'array' ? (
+	) : null;
+	const arrayContent = (multipleTypes ? selectedTypes.includes('array') : type === 'array') ? (
 		<>
 			<SchemaNodeEditor
 				arrayItem
@@ -721,6 +786,35 @@ function SchemaNodeEditor({
 				readOnly={readOnly}
 			/>
 		</>
+	) : null;
+	const structuralContent = objectContent || arrayContent ? (
+		<>
+			{objectContent}
+			{arrayContent}
+		</>
+	) : null;
+	const multipleTypesContent = multipleTypes ? (
+		<C.MultipleTypeSelector
+			label={labels.types}
+			options={jsonSchemaTypes.map(current => ({
+				value: current,
+				label: labelForJsonSchemaType(current, labels),
+				checked: selectedTypes.includes(current)
+			}))}
+			onChange={(value, checked) => {
+				if (!isJsonSchemaType(value))
+					return;
+
+				retainMultipleTypesRef.current = true;
+				onChange(withSchemaTypes(
+					schema,
+					checked
+						? [...selectedTypes, value]
+						: selectedTypes.filter(selected => selected !== value)
+				));
+			}}
+			readOnly={readOnly}
+		/>
 	) : null;
 	const definedCompositions = compositionKeywords.filter(keyword => !!schema[keyword]?.length);
 	const compositionContent = definedCompositions.map(keyword => {
@@ -767,17 +861,18 @@ function SchemaNodeEditor({
 			{settingsOpen ? (
 				<C.Section>
 					<C.SettingsGroup>
+						{multipleTypesContent}
 						{(() => {
 							const textFields = settingsTextFields(
 								schema,
-								type,
+								settingTypes,
 								labels,
 								onChange,
 								readOnly
 							);
 							const textareaFields = settingsTextareaFields(
 								schema,
-								type,
+								settingTypes,
 								labels,
 								onChange,
 								readOnly,
@@ -787,7 +882,7 @@ function SchemaNodeEditor({
 							return (
 								<>
 									{textFields.slice(0, 2).map(f => <C.TextFieldSetting key={f.key} field={f} />)}
-									{settingsCheckboxFields(schema, type, labels, onChange, readOnly).map(f => <C.CheckboxFieldSetting key={f.key} field={f} />)}
+									{settingsCheckboxFields(schema, type, multipleTypes, labels, onChange, readOnly).map(f => <C.CheckboxFieldSetting key={f.key} field={f} />)}
 									{textFields.slice(2).map(f => <C.TextFieldSetting key={f.key} field={f} />)}
 									{textareaFields.map(f => <C.TextareaFieldSetting key={f.key} field={f} />)}
 								</>
@@ -813,7 +908,7 @@ function SchemaNodeEditor({
 					value={
 						preferBaseStringType && enumOption
 							? 'string'
-							: typeSelectorValue(type, schema.format, enumOption, composition)
+							: typeSelectorValue(type, schema.format, enumOption, multipleTypes, composition)
 					}
 					options={typeSelectorOptions(schema.format, enumOption, labels)}
 					onChange={updateType}

@@ -146,6 +146,7 @@ The editor supports:
 - strings, numbers, integers, booleans, objects, and arrays;
 - nested objects and array item schemas;
 - recursive `allOf`, `anyOf`, and `oneOf` composition;
+- multiple data types declared with a `type` array;
 - nullable fields, titles, descriptions, formats, enums, and examples;
 - numeric, string, array, and object constraints exposed by the selected field type;
 - controlled, uncontrolled, read-only, and root-hidden rendering.
@@ -171,6 +172,23 @@ composition. Types and constraints are defined within the options:
 ```
 
 Schemas without an explicit `type` appear as **Unspecified** rather than being assigned a type by the editor.
+
+### Multiple Types
+
+Choose **Multiple types** to allow a field to accept more than one JSON data type. The editor stores the selection in
+the schema's `type` array and exposes the settings applicable to the selected types:
+
+```json
+{
+	"type": ["string", "number"],
+	"minLength": 1,
+	"minimum": 0
+}
+```
+
+Unlike `anyOf` and `oneOf`, all selected types share the same schema. Selecting both `object` and `array` therefore
+shows both the property editor and the array-item editor. `null` is available in the type checklist; for a single
+non-null type, the existing **Nullable** setting remains the shorter equivalent.
 
 ## API
 
@@ -220,6 +238,7 @@ interface SchemaEditorHandle {
 | `TextInput` | Edits property names and exposed text values. |
 | `FieldLabel` | Renders read-only labels such as the root or array item name. |
 | `TypeSelector` | Selects the schema type, format, enum presentation, or composition mode. |
+| `MultipleTypeSelector` | Edits the type checklist shown first in expanded field settings. |
 | `RequirementControl` | Changes whether an object property is required. |
 | `SettingsButton` | Opens or closes field settings. |
 | `SettingsGroup` | Places the expanded settings area. |
