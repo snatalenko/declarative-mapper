@@ -62,7 +62,7 @@ function getEditorTypeFromUrl(): EditorType {
 	const segment = window.location.hash.match(/^#\/([^/?#]+)/)?.[1];
 	const editorType = Object.entries(editorTypeUrlSegments)
 		.find(([, urlSegment]) => urlSegment === segment)?.[0];
-	return editorType && isEditorType(editorType) ? editorType : 'json';
+	return editorType && isEditorType(editorType) ? editorType : 'bs53';
 }
 
 function setEditorTypeUrlSegment(editorType: EditorType): void {
@@ -892,15 +892,13 @@ function App() {
 							>
 								Data
 							</button>
-							{sourceTab === 'schema' && (
-								<button
-									type="button"
-									style={secondaryButtonStyle}
-									onClick={() => setExpandedPanel(sourceExpanded ? null : 'source')}
-								>
-									{sourceExpanded ? 'Exit full screen' : 'Full screen'}
-								</button>
-							)}
+							<button
+								type="button"
+								style={secondaryButtonStyle}
+								onClick={() => setExpandedPanel(sourceExpanded ? null : 'source')}
+							>
+								{sourceExpanded ? 'Exit full screen' : 'Full screen'}
+							</button>
 						</div>
 					</div>
 					{sourceTab === 'schema' ? (
@@ -1365,15 +1363,13 @@ function App() {
 							>
 								Result
 							</button>
-							{destinationTab === 'schema' && (
-								<button
-									type="button"
-									style={secondaryButtonStyle}
-									onClick={() => setExpandedPanel(destinationExpanded ? null : 'destination')}
-								>
-									{destinationExpanded ? 'Exit full screen' : 'Full screen'}
-								</button>
-							)}
+							<button
+								type="button"
+								style={secondaryButtonStyle}
+								onClick={() => setExpandedPanel(destinationExpanded ? null : 'destination')}
+							>
+								{destinationExpanded ? 'Exit full screen' : 'Full screen'}
+							</button>
 						</div>
 					</div>
 					{destinationTab === 'schema' ? (
