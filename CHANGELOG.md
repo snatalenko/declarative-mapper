@@ -1,3 +1,23 @@
+## [2.0.1](https://github.com/snatalenko/morphos/compare/v2.0.0...v2.0.1) (2026-09-11)
+
+### Fixes
+
+* Unwrap mutable proxy receivers while keeping protected paths guarded ([bee8f61](https://github.com/snatalenko/morphos/commit/bee8f614404557c303308974f2c230cc14014625))
+
+### Security
+
+* Fix vulnerabilities in dev dependencies ([b60a586](https://github.com/snatalenko/morphos/commit/b60a586ef488e71dae8d4577dd16edd47ea11d02))
+
+### Chores
+
+* Publish mapping json schema ([c35db20](https://github.com/snatalenko/morphos/commit/c35db20519747d5050fbb0ea667c14b856768951))
+
+### Documentation
+
+* Update documentation for schema and mapping editors ([8c6caff](https://github.com/snatalenko/morphos/commit/8c6caffe2c2c68359742809de917560dedb7b5ad))
+* Add "Full screen" switches to playgrond schemas ([5167c77](https://github.com/snatalenko/morphos/commit/5167c778a4e6e2acb22b0d0de894912a5467852a))
+* Minor documentation improvements ([811fb16](https://github.com/snatalenko/morphos/commit/811fb1693b0dbaff1b84738ad198523c37921c4e))
+
 ## [2.0.0](https://github.com/snatalenko/morphos/compare/v1.7.2...v2.0.0) (2026-08-15)
 
 ### Features
