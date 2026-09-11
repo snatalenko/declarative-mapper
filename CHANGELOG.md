@@ -1,8 +1,19 @@
-## [2.1.0-beta.0](https://github.com/snatalenko/morphos/compare/v2.0.0...v2.1.0-beta.0) (2026-09-01)
+## [2.1.0-beta.1](https://github.com/snatalenko/morphos/compare/v2.0.1...v2.1.0-beta.1) (2026-09-11)
 
 ### Features
 
+* Support field multi-types in json schema editor ([4289f3c](https://github.com/snatalenko/morphos/commit/4289f3cfd1f327d9b2ed402e29d261cb6a8d9b0f))
 * Support for oneOf, allOf, anyOf in json schema editor ([adc4a0c](https://github.com/snatalenko/morphos/commit/adc4a0cf1f1990bbd2da7c4950cf5b052f9142f4))
+
+## [2.0.1](https://github.com/snatalenko/morphos/compare/v2.0.0...v2.0.1) (2026-09-11)
+
+### Fixes
+
+* Unwrap mutable proxy receivers while keeping protected paths guarded ([bee8f61](https://github.com/snatalenko/morphos/commit/bee8f614404557c303308974f2c230cc14014625))
+
+### Security
+
+* Fix vulnerabilities in dev dependencies ([b60a586](https://github.com/snatalenko/morphos/commit/b60a586ef488e71dae8d4577dd16edd47ea11d02))
 
 ### Chores
 
