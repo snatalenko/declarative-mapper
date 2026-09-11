@@ -861,6 +861,221 @@ if (false) {
 		expect(returnedValue.injected).to.eql('allowed');
 	});
 
+	it('keeps extension return values mutable inside array callbacks', () => {
+
+		const returnedValues = {
+			forEach: [{ n: 1 }, { n: 2 }],
+			map: [{ n: 1 }, { n: 2 }],
+			sort: [{ n: 2 }, { n: 1 }]
+		};
+
+		const mapper = createMapper({
+			value: `(() => {
+				const forEachValues = ext.get('forEach');
+				forEachValues.forEach(item => { item.n = 9; });
+
+				const mapValues = ext.get('map');
+				mapValues.map(item => { item.n = 9; return item; });
+
+				const sortValues = ext.get('sort');
+				sortValues.sort((a, b) => { a.n = 9; b.n = 9; return 0; });
+
+				return true;
+			})()`
+		}, {
+			extensions: {
+				ext: {
+					get: (method: keyof typeof returnedValues) => returnedValues[method]
+				}
+			}
+		});
+
+		expect(mapper({})).to.eql({ value: true });
+		expect(returnedValues.forEach.map(item => item.n)).to.eql([9, 9]);
+		expect(returnedValues.map.map(item => item.n)).to.eql([9, 9]);
+		expect(returnedValues.sort.map(item => item.n)).to.eql([9, 9]);
+	});
+
+	it('allows mutable callback paths to mutate host callback arguments', () => {
+
+		const secret = { token: 'safe' };
+		const mapper = createMapper({
+			value: `(() => {
+				ext.factory().run(value => { value.token = 'callback'; });
+
+				let directMutation;
+				try {
+					ext.secret.token = 'direct';
+					directMutation = 'mutated';
+				}
+				catch (e) {
+					directMutation = e.name;
+				}
+
+				return directMutation;
+			})()`
+		}, {
+			extensions: {
+				ext: {
+					secret,
+					factory: () => ({
+						run: (callback: (value: typeof secret) => void) => callback(secret)
+					})
+				}
+			}
+		});
+
+		expect(mapper({})).to.eql({ value: 'SecurityViolationError' });
+		expect(secret.token).to.eql('callback');
+		expect(mapper({})).to.eql({ value: 'SecurityViolationError' });
+		expect(secret.token).to.eql('callback');
+	});
+
+	it('passes raw host values to extensions for mutable-path arguments', () => {
+
+		const values = [1, 2, 3];
+		const mapper = createMapper({
+			value: 'ext.isOriginal(ext.getValues())'
+		}, {
+			extensions: {
+				ext: {
+					getValues: () => values,
+					isOriginal: (value: number[]) => value === values
+				}
+			}
+		});
+
+		expect(mapper({})).to.eql({ value: true });
+	});
+
+	it('isolates protected and mutable paths to the same extension value', () => {
+
+		const sharedValue = { value: 'original' };
+
+		const mapper = createMapper({
+			value: `(() => {
+				const protectedAlias = ext.shared;
+				const mutableAlias = ext.get();
+				const values = ext.getValues();
+				mutableAlias.value = 'changed';
+				let protectedWrite;
+				try {
+					protectedAlias.value = 'blocked';
+					protectedWrite = 'mutated';
+				}
+				catch (e) {
+					protectedWrite = e.name;
+				}
+
+				return {
+					same: protectedAlias === mutableAlias,
+					includes: values.includes(mutableAlias),
+					index: values.indexOf(protectedAlias),
+					setSize: new Set([protectedAlias, mutableAlias]).size,
+					protectedWrite,
+					protectedAliasValue: protectedAlias.value
+				};
+			})()`
+		}, {
+			extensions: {
+				ext: {
+					shared: sharedValue,
+					get: () => sharedValue,
+					getValues: () => [sharedValue]
+				}
+			}
+		});
+
+		expect(mapper({})).to.eql({
+			value: {
+				same: false,
+				includes: true,
+				index: -1,
+				setSize: 2,
+				protectedWrite: 'SecurityViolationError',
+				protectedAliasValue: 'changed'
+			}
+		});
+		expect(sharedValue.value).to.eql('changed');
+	});
+
+	it('keeps protected proxies protected when extension functions pass them through', () => {
+
+		const protectedValue = {
+			n: 1,
+			self() {
+				return this;
+			}
+		};
+
+		const mapper = createMapper({
+			value: `(() => {
+				const attemptMutation = value => {
+					try {
+						value.n = 9;
+						return 'mutated';
+					}
+					catch (e) {
+						return e.name;
+					}
+				};
+
+				return {
+					direct: attemptMutation(ext.value),
+					identity: attemptMutation(ext.identity(ext.value)),
+					array: attemptMutation(ext.ensureArray(ext.value)[0]),
+					receiver: attemptMutation(ext.value.self())
+				};
+			})()`
+		}, {
+			extensions: {
+				ext: {
+					value: protectedValue,
+					identity: <T>(value: T) => value,
+					ensureArray: <T>(value: T) => [value]
+				}
+			}
+		});
+
+		expect(mapper({})).to.eql({
+			value: {
+				direct: 'SecurityViolationError',
+				identity: 'SecurityViolationError',
+				array: 'SecurityViolationError',
+				receiver: 'SecurityViolationError'
+			}
+		});
+		expect(protectedValue.n).to.eql(1);
+	});
+
+	it('does not let mutable return values disable protection in later mapping runs', () => {
+
+		const sharedValue = { n: 1 };
+		const mapper = createMapper({
+			value: `(() => {
+				const value = $input.mutable ? ext.get() : ext.value;
+				try {
+					value.n += 1;
+					return 'mutated';
+				}
+				catch (e) {
+					return e.name;
+				}
+			})()`
+		}, {
+			extensions: {
+				ext: {
+					value: sharedValue,
+					get: () => sharedValue
+				}
+			}
+		});
+
+		expect(mapper({ mutable: true })).to.eql({ value: 'mutated' });
+		expect(mapper({ mutable: false })).to.eql({ value: 'SecurityViolationError' });
+		expect(sharedValue.n).to.eql(2);
+	});
+
 	it('clones extension returned dates into the VM realm', () => {
 
 		const mapper = createMapper({
@@ -987,6 +1202,33 @@ if (false) {
 		});
 
 		expect(mapper({})).to.eql({ value: [2, 4, 6] });
+	});
+
+	it('allows Object.fromEntries to consume a mapped array returned by an extension', () => {
+
+		const ensureArray = <T>(arrayOrObject: T[] | T): T[] =>
+			(Array.isArray(arrayOrObject) ? arrayOrObject : [arrayOrObject]);
+		const profile = {
+			active: true,
+			displayName: 'bosco Baravuga',
+			id: 'a3103ab0fa084b8fa107587cce34e53f'
+		};
+
+		const mapper = createMapper({
+			'*': 'Object.fromEntries($array.ensureArray($sources.profilesApiResponse).map(p => [p.id, p]))'
+		}, {
+			extensions: {
+				$array: { ensureArray }
+			}
+		});
+
+		expect(mapper({
+			$sources: {
+				profilesApiResponse: [profile]
+			}
+		})).to.eql({
+			[profile.id]: profile
+		});
 	});
 
 	it('does not leak errors thrown from the logger into the sandbox', () => {
