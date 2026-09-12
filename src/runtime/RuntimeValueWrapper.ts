@@ -1,4 +1,5 @@
 import type { ILogger } from '../ILogger.ts';
+import { types } from 'util';
 import SecurityViolationError from './SecurityViolationError.ts';
 
 const BLOCKED_PROPERTY_NAMES = new Set([
@@ -41,6 +42,9 @@ export default class RuntimeValueWrapper {
 	/** Lookup from each wrapper-created proxy to its original value and fixed protection mode */
 	#unwrappedValues = new WeakMap<object, WrappedRuntimeValue>();
 
+	/** Whether any proxy has ever been handed to mapping code, and a result may therefore contain one */
+	#proxyIssued = false;
+
 	/** Serializers for converting supported host values into equivalents owned by the VM realm */
 	#serializers: RuntimeValueSerializer[];
 
@@ -59,6 +63,97 @@ export default class RuntimeValueWrapper {
 			return value;
 
 		return (this.#unwrappedValues.get(value)?.value ?? value) as T;
+	}
+
+	/**
+	 * Remove wrapper-created proxies from a mapper result before returning it to the host.
+	 *
+	 * Visits own enumerable data properties only. Accessors, mapping-built proxies and `Map`/`Set`
+	 * contents are left alone: reaching them runs mapping code or methods the mapping can shadow,
+	 * after the VM timeout stopped applying, and none of them survive JSON serialization anyway.
+	 *
+	 * Rebuilds the object-bearing result spine: a container with an enumerable object-valued property
+	 * is replaced, one holding only primitives is returned as is and may still be extension state.
+	 */
+	unwrapResult<T>(value: T): T {
+		if (!this.#proxyIssued)
+			return value;
+
+		return this.#unwrapDeep(value, new Map<object, any>());
+	}
+
+	#unwrapDeep(node: any, visited: Map<object, any>): any {
+		if (node === null || (typeof node !== 'object' && typeof node !== 'function'))
+			return node;
+
+		// Values behind a proxy are traversed too: `Array.prototype.map` and friends return a host
+		// array holding VM values holding proxies
+		const target = this.unwrap(node);
+		if (typeof target === 'function')
+			return target;
+
+		// Listing keys or reading a descriptor of a mapping-built proxy would run its traps, which is
+		// sandboxed code running past the timeout. `types.isProxy` decides without touching the value.
+		if (types.isProxy(target))
+			return target;
+
+		if (visited.has(target))
+			return visited.get(target);
+
+		// Decided from this value's own descriptors, before recursing. Looking deeper first would pick
+		// the container after cycles had resolved against the old one, breaking the back-reference.
+		const entries: [string | symbol, PropertyDescriptor][] = [];
+		let replaceable = false;
+		for (const key of Reflect.ownKeys(target)) {
+			const descriptor = Reflect.getOwnPropertyDescriptor(target, key);
+			if (!descriptor)
+				continue;
+
+			entries.push([key, descriptor]);
+			if (!descriptor.enumerable || !('value' in descriptor))
+				continue;
+
+			const { value } = descriptor;
+			replaceable ||= value !== null && (typeof value === 'object' || typeof value === 'function');
+		}
+
+		// Rebuilt, never rewritten: an extension can hold any value the mapping handed it, and storing
+		// a raw protected object inside one would give a later mutable read a path to it
+		const container = replaceable ? RuntimeValueWrapper.#emptyLike(target) : target;
+
+		// Registered before recursing so a reference cycle resolves to the container being returned
+		visited.set(target, container);
+		if (container === target)
+			return target;
+
+		// Defined, not assigned: the container keeps the original prototype, so assignment could reach
+		// an inherited setter, running mapping code past the timeout and leaving no own property
+		for (const [key, descriptor] of entries)
+			Reflect.defineProperty(container, key, this.#unwrapDescriptor(descriptor, visited) ?? descriptor);
+
+		return container;
+	}
+
+	/**
+	 * Produce the descriptor a result property should end up with, or `undefined` to keep it as is.
+	 * Accessors are carried over untouched: reading one would run mapping code past the timeout.
+	 */
+	#unwrapDescriptor(descriptor: PropertyDescriptor, visited: Map<object, any>): PropertyDescriptor | undefined {
+		if (!descriptor.enumerable || !('value' in descriptor))
+			return undefined;
+
+		const current = descriptor.value;
+		if (current === null || (typeof current !== 'object' && typeof current !== 'function'))
+			return undefined;
+
+		const unwrapped = this.#unwrapDeep(current, visited);
+
+		return unwrapped === current ? undefined : { ...descriptor, value: unwrapped };
+	}
+
+	/** An empty container of the same shape, so properties can be rebuilt onto it */
+	static #emptyLike(target: object): any {
+		return Array.isArray(target) ? [] : Object.create(Reflect.getPrototypeOf(target));
 	}
 
 	/**
@@ -275,6 +370,7 @@ export default class RuntimeValueWrapper {
 		const runtimeValue: WrappedRuntimeValue = { value, proxy, protect };
 		wrappedValues.set(value, runtimeValue);
 		this.#unwrappedValues.set(proxy, runtimeValue);
+		this.#proxyIssued = true;
 
 		return proxy as T;
 	}

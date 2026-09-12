@@ -83,7 +83,7 @@ export default function createMapper<TSource extends object, TResult>(map: RootM
 				timeout: options?.timeout
 			});
 
-			return ctx.$result;
+			return valueWrapper.unwrapResult(ctx.$result);
 		}
 		catch (error: unknown) {
 			throw valueWrapper.unwrap(error);

@@ -1218,17 +1218,376 @@ if (false) {
 			'*': 'Object.fromEntries($array.ensureArray($sources.profilesApiResponse).map(p => [p.id, p]))'
 		}, {
 			extensions: {
-				$array: { ensureArray }
+				$array: { ensureArray },
+				$sources: {
+					profilesApiResponse: [profile]
+				}
 			}
 		});
 
-		expect(mapper({
-			$sources: {
-				profilesApiResponse: [profile]
-			}
-		})).to.eql({
+		const result = mapper({}) as Record<string, typeof profile>;
+
+		expect(result).to.eql({
 			[profile.id]: profile
 		});
+
+		// Deep equality is the output contract; reference identity is not representable in JSON
+		expect(Object.getPrototypeOf(result[profile.id])).to.equal(Object.prototype);
+	});
+
+	it('unwraps extension values nested inside arrays built by host array methods', () => {
+
+		const rows = [{ a: 1 }, { a: 2 }];
+		const mapper = createMapper({
+			'*': '({ list: $ext.rows.map(row => ({ row })) })'
+		}, {
+			extensions: {
+				$ext: { rows }
+			}
+		});
+
+		const result = mapper({}) as { list: { row: typeof rows[0] }[] };
+
+		expect(result.list.map(item => item.row)).to.eql(rows);
+
+		// No proxy survives: a wrapped value would report a null prototype
+		for (const item of result.list)
+			expect(Object.getPrototypeOf(item.row)).to.equal(Object.prototype);
+	});
+
+	it('does not execute result getters once the mapping run has finished', () => {
+
+		const tracked = { value: 1 };
+		const calls: string[] = [];
+		const mapper = createMapper({
+			'*': `(() => {
+				const output = { eager: $ext.track() };
+				Object.defineProperty(output, 'lazy', {
+					get: () => $ext.track(),
+					enumerable: true,
+					configurable: true
+				});
+
+				return output;
+			})()`
+		}, {
+			extensions: {
+				$ext: {
+					track() {
+						calls.push('read');
+
+						return tracked;
+					}
+				}
+			}
+		});
+
+		const result = mapper({}) as { eager: typeof tracked, lazy: typeof tracked };
+
+		// Reading the accessor would run mapping code past the timeout, so cleanup leaves it alone
+		expect(calls).to.eql(['read']);
+		expect(result.eager).to.equal(tracked);
+		expect(calls).to.eql(['read']);
+		expect(JSON.stringify(result)).to.eql('{"eager":{"value":1},"lazy":{"value":1}}');
+		expect(calls).to.eql(['read', 'read']);
+	});
+
+	it('does not rewrite extension owned containers while unwrapping the result', () => {
+
+		const secret = { token: 'safe' };
+		const stored: unknown[] = [];
+		const mapper = createMapper({
+			held: '$ext.keep($ext.secret)',
+			write: `(() => {
+				try {
+					$ext.stored()[0].token = 'hacked';
+					return 'mutated';
+				}
+				catch (e) {
+					return e.name;
+				}
+			})()`
+		}, {
+			extensions: {
+				$ext: {
+					secret,
+					stored: () => stored,
+					keep(value: unknown) {
+						if (!stored.length)
+							stored.push(value);
+
+						return stored;
+					}
+				}
+			}
+		});
+
+		// Replacing the stored proxy with the raw object would expose it to a later mutable read
+		expect(mapper({})).to.eql({ held: [{ token: 'safe' }], write: 'SecurityViolationError' });
+		expect(stored[0]).to.not.equal(secret);
+		expect(mapper({})).to.eql({ held: [{ token: 'safe' }], write: 'SecurityViolationError' });
+		expect(secret.token).to.eql('safe');
+	});
+
+	it('rebuilds result containers instead of aliasing the ones an extension still holds', () => {
+
+		const rows = [{ a: 1 }, { a: 2 }];
+		const leaf = { a: 1 };
+		const mapper = createMapper({
+			container: '$ext.rows',
+			leaf: '$ext.leaf'
+		}, {
+			extensions: {
+				$ext: { rows, leaf }
+			}
+		});
+
+		const result = mapper({}) as { container: typeof rows, leaf: typeof leaf };
+
+		expect(result).to.eql({ container: rows, leaf });
+
+		// Implementation detail, asserted so the rebuild is not silently dropped
+		expect(result.container).to.not.equal(rows);
+		expect(result.container[0]).to.equal(rows[0]);
+		expect(result.leaf).to.equal(leaf);
+	});
+
+	it('does not run the traps of a proxy the mapping built for itself', () => {
+
+		const calls: string[] = [];
+		const mapper = createMapper({
+			'*': `(() => {
+				const RuntimeProxy = Function('return Proxy')();
+
+				return new RuntimeProxy({ v: $ext.held }, {
+					ownKeys(target) {
+						$ext.mark('ownKeys');
+
+						return Reflect.ownKeys(target);
+					},
+					getOwnPropertyDescriptor(target, key) {
+						$ext.mark('getOwnPropertyDescriptor');
+
+						return Reflect.getOwnPropertyDescriptor(target, key);
+					}
+				});
+			})()`
+		}, {
+			extensions: {
+				$ext: {
+					held: { a: 1 },
+					mark(name: string) {
+						calls.push(name);
+					}
+				}
+			}
+		});
+
+		// Traps are sandboxed code, running them here would escape the configured timeout
+		expect(() => mapper({})).to.not.throw();
+		expect(calls).to.eql([]);
+	});
+
+	it('does not reach an inherited setter while rebuilding a result container', () => {
+
+		const calls: string[] = [];
+		const held = { a: 1 };
+		const mapper = createMapper({
+			'*': `(() => {
+				const prototype = {};
+				Object.defineProperty(prototype, 'v', {
+					get: () => 'from prototype',
+					set: () => $ext.mark(),
+					configurable: true
+				});
+
+				const output = Object.create(prototype);
+				Object.defineProperty(output, 'v', {
+					value: $ext.held,
+					writable: true,
+					enumerable: true,
+					configurable: true
+				});
+
+				return output;
+			})()`
+		}, {
+			extensions: {
+				$ext: {
+					held,
+					mark() {
+						calls.push('set');
+					}
+				}
+			}
+		});
+
+		const result = mapper({}) as { v: typeof held };
+
+		// Assigning onto the rebuilt container would run the prototype setter past the timeout,
+		// and would leave no own property behind
+		expect(calls).to.eql([]);
+		expect(Object.prototype.hasOwnProperty.call(result, 'v')).to.eql(true);
+		expect(result.v).to.eql(held);
+	});
+
+	it('does not rewrite an extension owned container nested below the returned one', () => {
+
+		const secret = { token: 'safe' };
+		const container: { inner: unknown[] } = { inner: [] };
+		const mapper = createMapper({
+			held: '$ext.keep($ext.secret)',
+			write: `(() => {
+				try {
+					$ext.container().inner[0].token = 'hacked';
+					return 'mutated';
+				}
+				catch (e) {
+					return e.name;
+				}
+			})()`
+		}, {
+			extensions: {
+				$ext: {
+					secret,
+					container: () => container,
+					keep(value: unknown) {
+						if (!container.inner.length)
+							container.inner.push(value);
+
+						return container;
+					}
+				}
+			}
+		});
+
+		const expected = { held: { inner: [{ token: 'safe' }] }, write: 'SecurityViolationError' };
+
+		expect(mapper({})).to.eql(expected);
+		expect(container.inner[0]).to.not.equal(secret);
+		expect(mapper({})).to.eql(expected);
+		expect(secret.token).to.eql('safe');
+	});
+
+	it('does not rewrite a mapping built object that an extension kept a reference to', () => {
+
+		const secret = { token: 'safe' };
+		let held: unknown;
+		const mapper = createMapper({
+			direct: `(() => {
+				const value = { secret: $ext.secret };
+				$ext.hold(value);
+
+				return value;
+			})()`,
+			write: `(() => {
+				try {
+					$ext.held().secret.token = 'hacked';
+					return 'mutated';
+				}
+				catch (e) {
+					return e.name;
+				}
+			})()`
+		}, {
+			extensions: {
+				$ext: {
+					secret,
+					hold(value: unknown) {
+						held ??= value;
+					},
+					held: () => held
+				}
+			}
+		});
+
+		const expected = { direct: { secret: { token: 'safe' } }, write: 'SecurityViolationError' };
+
+		expect(mapper({})).to.eql(expected);
+		expect(mapper({})).to.eql(expected);
+		expect(secret.token).to.eql('safe');
+	});
+
+	it('keeps cyclic back-references pointing at the returned container', () => {
+
+		const secret = { token: 'safe' };
+		const cyclic: unknown[] & { self?: unknown[] } = [];
+		const mapper = createMapper({
+			'*': '$ext.build($ext.secret)'
+		}, {
+			extensions: {
+				$ext: {
+					secret,
+					build(value: unknown) {
+						if (!cyclic.length) {
+							cyclic.push(value);
+							cyclic.self = cyclic;
+						}
+
+						return cyclic;
+					}
+				}
+			}
+		});
+
+		const result = mapper({}) as unknown[] & { self: unknown[] };
+
+		expect(result).to.not.equal(cyclic);
+		expect(result.self).to.equal(result);
+		expect(result[0]).to.eql(secret);
+		expect((result.self as unknown[])[0]).to.eql(secret);
+
+		// The extension keeps its protected proxy, so a later run cannot reach the raw object
+		expect(cyclic[0]).to.not.equal(secret);
+		expect(secret.token).to.eql('safe');
+	});
+
+	it('preserves property flags when unwrapping a read-only result property', () => {
+
+		const value = { a: 1 };
+		const mapper = createMapper({
+			'*': `(() => {
+				const output = {};
+				Object.defineProperty(output, 'locked', {
+					value: $ext.value,
+					writable: false,
+					enumerable: true,
+					configurable: true
+				});
+
+				return output;
+			})()`
+		}, {
+			extensions: {
+				$ext: { value }
+			}
+		});
+
+		const result = mapper({}) as { locked: typeof value };
+		const descriptor = Object.getOwnPropertyDescriptor(result, 'locked');
+
+		expect(result.locked).to.equal(value);
+		expect(descriptor).to.include({ writable: false, enumerable: true, configurable: true });
+	});
+
+	it('leaves extension values held in a Map or Set wrapped, as neither survives JSON output', () => {
+
+		const value = { a: 1 };
+		const mapper = createMapper({
+			'*': '({ collected: new Map([["key", $ext.value]]), plain: { value: $ext.value } })'
+		}, {
+			extensions: {
+				$ext: { value }
+			}
+		});
+
+		const result = mapper({}) as { collected: Map<string, typeof value>, plain: { value: typeof value } };
+
+		expect(Map.prototype.get.call(result.collected, 'key')).to.not.equal(value);
+		expect(JSON.stringify(result.collected)).to.eql('{}');
+
+		// Entries outside the collection are still unwrapped
+		expect(result.plain.value).to.equal(value);
 	});
 
 	it('does not leak errors thrown from the logger into the sandbox', () => {
