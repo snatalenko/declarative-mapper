@@ -45,6 +45,36 @@ describe('createMapper security', () => {
 		});
 	});
 
+	it('disables string and WebAssembly code generation inside the mapping context', () => {
+
+		const mapper = createMapper({
+			stringCode: `(() => {
+				try {
+					Function('return 1')();
+					return 'allowed';
+				}
+				catch (e) {
+					return e.name;
+				}
+			})()`,
+			wasmCode: `(() => {
+				try {
+					const RuntimeWebAssembly = (function() { return this; })().WebAssembly;
+					new RuntimeWebAssembly.Module(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]));
+					return 'allowed';
+				}
+				catch (e) {
+					return e.name;
+				}
+			})()`
+		});
+
+		expect(mapper({})).to.eql({
+			stringCode: 'EvalError',
+			wasmCode: 'CompileError'
+		});
+	});
+
 	it('blocks Function-based require access', () => {
 
 		const mapper = createMapper({
@@ -74,13 +104,13 @@ describe('createMapper security', () => {
 	it('keeps inherited input functions bound to the VM realm', () => {
 
 		const mapper = createMapper({
-			value: '$input.nested.toString.constructor("return typeof process")()'
+			value: '$input.nested.toString === Object.prototype.toString'
 		});
 
 		const result = mapper({ nested: {} });
 
 		expect(result).to.eql({
-			value: 'undefined'
+			value: true
 		});
 	});
 
@@ -305,6 +335,25 @@ if (false) {
 
 		const mapper = createMapper({
 			value: '(() => { while (true) {} })()'
+		}, {
+			timeout: 10
+		});
+
+		expect(() => mapper({})).to.throw(/Script execution timed out/);
+	});
+
+	it('interrupts long-running microtasks scheduled by the mapping', () => {
+
+		const mapper = createMapper({
+			'*': `(() => {
+				const RuntimePromise = (function() { return this; })().Promise;
+				RuntimePromise.resolve().then(() => {
+					const startedAt = Date.now();
+					while (Date.now() - startedAt < 100) { /* Keep the VM busy past the timeout */ }
+				});
+
+				return null;
+			})()`
 		}, {
 			timeout: 10
 		});
@@ -1085,7 +1134,7 @@ if (false) {
 
 				return {
 					time: shifted.getTime(),
-					process: shifted.constructor.constructor("return typeof process")()
+					inRuntimeRealm: Object.getPrototypeOf(shifted) === Date.prototype
 				};
 			})()`
 		}, {
@@ -1109,7 +1158,7 @@ if (false) {
 		expect(mapper({})).to.eql({
 			value: {
 				time: new Date(2024, 5, 1).getTime(),
-				process: 'undefined'
+				inRuntimeRealm: true
 			}
 		});
 	});
@@ -1357,7 +1406,7 @@ if (false) {
 		const calls: string[] = [];
 		const mapper = createMapper({
 			'*': `(() => {
-				const RuntimeProxy = Function('return Proxy')();
+				const RuntimeProxy = (function() { return this; })().Proxy;
 
 				return new RuntimeProxy({ v: $ext.held }, {
 					ownKeys(target) {

@@ -3,10 +3,12 @@ import RuntimeValueWrapper, { isBlockedRuntimeProperty } from './RuntimeValueWra
 import SecurityViolationError from './SecurityViolationError.ts';
 
 /**
- * JavaScript's standard, built-in objects
+ * Names resolved from the VM global scope instead of mapping input
+ *
+ * This is a scope convenience, not a security boundary: mapping code can recover the VM global object
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
  */
-const SAFE_GLOBAL_PROPERTY_NAMES = new Set([
+const VM_GLOBAL_PROPERTY_NAMES = new Set([
 	'Infinity',
 	'NaN',
 	'isFinite',
@@ -72,7 +74,7 @@ export default function createGlobalContext(
 			if (typeof key !== 'string')
 				return false;
 
-			if (SAFE_GLOBAL_PROPERTY_NAMES.has(key))
+			if (VM_GLOBAL_PROPERTY_NAMES.has(key))
 				return false;
 
 			if (extensionNames?.has(key))
