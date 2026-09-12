@@ -1,9 +1,19 @@
-## [2.1.0-beta.1](https://github.com/snatalenko/morphos/compare/v2.0.1...v2.1.0-beta.1) (2026-09-11)
+## [2.1.0-beta.2](https://github.com/snatalenko/morphos/compare/v2.0.2...v2.1.0-beta.2) (2026-09-12)
 
 ### Features
 
 * Support field multi-types in json schema editor ([4289f3c](https://github.com/snatalenko/morphos/commit/4289f3cfd1f327d9b2ed402e29d261cb6a8d9b0f))
 * Support for oneOf, allOf, anyOf in json schema editor ([adc4a0c](https://github.com/snatalenko/morphos/commit/adc4a0cf1f1990bbd2da7c4950cf5b052f9142f4))
+
+## [2.0.2](https://github.com/snatalenko/morphos/compare/v2.0.1...v2.0.2) (2026-09-12)
+
+### Fixes
+
+* Remove runtime wrappers from mapper results ([2d2f986](https://github.com/snatalenko/morphos/commit/2d2f986668293587390db0e45a05b1f8a34bf63d))
+
+### Security
+
+* Disable code generation and bound microtasks in the mapping context ([06e513c](https://github.com/snatalenko/morphos/commit/06e513cbf486494b5d8d839d499aa7907810f11a))
 
 ## [2.0.1](https://github.com/snatalenko/morphos/compare/v2.0.0...v2.0.1) (2026-09-11)
 
