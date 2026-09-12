@@ -628,6 +628,31 @@ Extension keys are available as globals in expressions.
 
 If an extension key conflicts with an input field name, mapper throws an error.
 
+### Extension values in the result
+
+Extension values reach mapping expressions through a guard that blocks constructor-based escapes.
+Before the mapper returns, those guards are removed from the supported JSON-shaped portion of the
+result: objects and arrays connected through own enumerable data properties.
+
+Guards are only removed from own enumerable data properties. A value kept anywhere else stays
+wrapped, and a wrapped value has a `null` prototype and no `constructor`:
+
+- inside a `Map` or `Set`
+- behind a getter
+- inside a `Proxy` the mapping built for itself
+- on a prototype, or in a non-enumerable property
+
+`Map` and `Set` entries, prototype properties, and non-enumerable properties are omitted by
+`JSON.stringify`. Getters and mapping-created proxies are different: serialization may invoke their
+code after the mapper returns, outside the configured `timeout`. Treat those result shapes as
+unsupported.
+
+Errors thrown out of a mapping are not cleaned this way. Properties attached to a thrown error may
+still hold wrapped values.
+
+A result can still reach an extension's own data, so mutating it mutates the extension. Return
+copies from an extension if the caller should not be able to change what it holds.
+
 ## Mapper Options
 
 `createMapper(mapping, options)` accepts:

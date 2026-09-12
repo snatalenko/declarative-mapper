@@ -55,7 +55,13 @@ export default function createMapper<TSource extends object, TResult>(map: RootM
 	const extensionNames = options?.extensions ? new Set(Object.keys(options.extensions)) : undefined;
 
 	const sandbox: TMappingScriptEnvironment<TSource, TResult> = {};
-	const ctx = vm.createContext(sandbox) as TMappingScriptEnvironment<TSource, TResult>;
+	const ctx = vm.createContext(sandbox, {
+		codeGeneration: {
+			strings: false,
+			wasm: false
+		},
+		microtaskMode: 'afterEvaluate'
+	}) as TMappingScriptEnvironment<TSource, TResult>;
 
 	const RuntimeDate = new vm.Script('Date').runInContext(ctx) as DateConstructor;
 	const serializers: RuntimeValueSerializer[] = [{
@@ -83,7 +89,7 @@ export default function createMapper<TSource extends object, TResult>(map: RootM
 				timeout: options?.timeout
 			});
 
-			return ctx.$result;
+			return valueWrapper.unwrapResult(ctx.$result);
 		}
 		catch (error: unknown) {
 			throw valueWrapper.unwrap(error);
