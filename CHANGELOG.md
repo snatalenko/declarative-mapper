@@ -1,3 +1,13 @@
+## [2.0.2](https://github.com/snatalenko/morphos/compare/v2.0.1...v2.0.2) (2026-09-12)
+
+### Fixes
+
+* Remove runtime wrappers from mapper results ([2d2f986](https://github.com/snatalenko/morphos/commit/2d2f986668293587390db0e45a05b1f8a34bf63d))
+
+### Security
+
+* Disable code generation and bound microtasks in the mapping context ([06e513c](https://github.com/snatalenko/morphos/commit/06e513cbf486494b5d8d839d499aa7907810f11a))
+
 ## [2.0.1](https://github.com/snatalenko/morphos/compare/v2.0.0...v2.0.1) (2026-09-11)
 
 ### Fixes
